@@ -17,7 +17,7 @@ The dataset can be downloaded as a .txt file where each row contains the 7 featu
 the 8th value is either 1, 2, or 3 indicating its class membership. Feature are separated by white space.
 
 TODO:
-1. Read data from text file. 
+1. ~~Read data from text file.~~ 
 2. Partition data into training and validation sets. 
 3. Create model(s), train. 
 4. Run on validation set. 
