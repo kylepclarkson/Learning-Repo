@@ -16,16 +16,16 @@ def get_data_from_file(filepath, proportion=0.8):
     n_samples = data.shape[0]
     n_train = int(proportion * n_samples)
     shuffle_indices = torch.randperm(n_samples)
-    train_data = data[shuffle_indices[:n_train]]
-    val_data = data[shuffle_indices[:-n_train]]
+    train_data = data[shuffle_indices[:n_train]].float()
+    val_data = data[shuffle_indices[:-n_train]].float()
 
     # encode labels via one-hot vectors
     train_label = train_data[:, -1].long()
     val_label = val_data[:, -1].long()
 
     # there are 3 classes for this dataset.
-    train_onehot = torch.zeros(train_data.shape[0], 3).long()
-    val_onehot = torch.zeros(val_data.shape[0], 3).long()
+    train_onehot = torch.zeros(train_data.shape[0], 3).float()
+    val_onehot = torch.zeros(val_data.shape[0], 3).float()
     # subtract 1 as scatter_ assumes 0 based indexing;
     # data set uses labels: 1,2,3.
     train_onehot.scatter_(1, train_label.unsqueeze(1)-1, 1.0)
@@ -41,6 +41,9 @@ class SimpleModel(torch.nn.Module):
         self.linear3 = torch.nn.Linear(h_2dim, out_dim)
 
     def forward(self, x):
+        # x = self.linear1(x).clamp(min=0)
+        # x = self.linear2(x).clamp(min=0)
+        # x = self.linear3(x).clamp(min=0)
         x = torch.nn.functional.relu(self.linear1(x))
         x = torch.nn.functional.relu(self.linear2(x))
         x = torch.nn.functional.relu(self.linear3(x))
@@ -49,5 +52,39 @@ class SimpleModel(torch.nn.Module):
 if __name__ == '__main__':
     x_train, y_train, x_val, y_val = get_data_from_file('wheat.csv', .85)
 
-    print(x_train.shape, y_train.shape)
-    print(x_val.shape, y_val.shape)
+    device = (torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu'))
+    print("Device: ", device)
+
+    n_input = x_train.shape[1]
+    n_out = y_train.shape[1]
+
+    model = SimpleModel(n_input, 40, 20, n_out)
+
+    criterion = torch.nn.MSELoss(reduction='sum')
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+
+    n_epochs = 50_000
+
+    # print([param for param in model.parameters()])
+
+    for epoch in range(1, n_epochs+1):
+        # Feed forward training data, compute loss.
+        x_train.to(device=device)
+        y_train.to(device=device)
+        y_train_pred = model(x_train)
+        loss_train = criterion(y_train_pred, y_train)
+
+        optimizer.zero_grad()
+        loss_train.backward()
+        optimizer.step()
+
+        if epoch % 500 == 0:
+            # Feed forward validation data, compute loss.
+            x_val.to(device=device)
+            y_val.to(device=device)
+            y_val_pred = model(x_val)
+            loss_val = criterion(y_val_pred, y_val)
+            print(f'Epoch: {epoch}. Training loss: {loss_train.item():.4f}. Validation loss: {loss_val.item():.4f}')
+
+
+
