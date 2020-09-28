@@ -1,5 +1,5 @@
 # Wheat Seed Dataset
---- 
+
 Dataset: http://archive.ics.uci.edu/ml/datasets/seeds#  
 
 Features of three different types of wheat: Kama, Rosa, and Canadian. 70 elements each. 
@@ -21,6 +21,15 @@ TODO:
 2. ~~Partition data into training and validation sets.~~
 3. ~~Create model(s), train.~~
 4. ~~Run on validation set.~~
-5. Plot results.
+5. ~~Plot results.~~
+
+## Results:
+
+We implemented two neural networks with one and two hidden layers.
+The sizes of hidden layers were 40/30 and (128/128 and 40/20) respectively.
+Using $L_2$ loss and Adam optimizer, we trained several models which quickly
+converged to local optimums. 
+
+Further experimentation with neural networks and other loss functions, or other classification models, are warranted. 
 
 
