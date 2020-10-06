@@ -21,10 +21,11 @@ class Tree:
     def parent(self):
         raise NotImplementedError()
 
-    def num_children(self, pos):
+    def children(self, pos):
+        # Generate an iteration of Positions representing pos' children.
         raise NotImplementedError()
 
-    def children(self, pos):
+    def num_children(self, pos):
         raise NotImplementedError()
 
     def __len__(self):
@@ -40,3 +41,14 @@ class Tree:
 
     def is_empty(self):
         return len(self) == 0
+
+    def height(self, pos):
+        """ Return height of tree rooted at pos."""
+        if pos is None:
+            p = self.root()
+
+        if self.is_leaf(pos):
+            return 0
+        else:
+            return 1 + max(self.height(c) for c in self.children(pos))
+
