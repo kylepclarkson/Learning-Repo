@@ -174,31 +174,102 @@ class Tree(TreeADT):
         node = self._validate(pos)
 
         if self.num_children(pos) > 1:
-            raise ValueError('pos have more than one child')
+            raise ValueError('pos have more than one child:', pos._node._element, list(pos._node._children.values()))
 
-        if len(node._children) == 0:
-            node._parent = node         # deprecate node.
-        else:
-            # single child. Swap
-            child = node._children[0]
+        child = list(node._children.values())[0] if len(node._children) == 1 else None
+        print("child type: ", type(child))
+        if child is not None:
             child._parent = node._parent
-            self._size -= 1
-            node._parent = node         # deprecate node.
+        # If node was root, set root to child.
+        if node is self._root:
+            self._root = child
+        # node was an internal node.
+        else:
+            parent = node._parent
+            for child in node._children:
+                parent._children[child] = node._children.pop(child)
+
+        self._size -= 1
+        node._parent = node         # deprecate node.
         return node._element
 
-    def _insert_between(self, pos_parent, pos_child, e):
-        """ Insert new Position with element e in between pos_parent and pos_child.
-        pos_child will be a child of the new Position, and the new Position will
-        be a child of pos_parent.
-        Return Position of new node.
-        """
+    def _delete_tree(self):
+        if not self.is_empty():
+            for pos in self.postorder():
+                print("removing: ", pos._node._element)
+                self._remove(pos)
+                print('BFS of tree after removing', pos._node._element)
+                for n in self.bfs():
+                    print(n.element())
 
-        parent_node = self._validate(pos_parent)
-        child_node = self._validate(pos_child)
-        # Check that parent-child relationship holds.
-        if not child_node in parent_node._children:
-            raise ValueError('pos_parent is not a parent of pos_child')
-        self._size += 1
-        new_node = self._Node(e, parent_node)
-        child_node._parent = new_node
-        return self._make_position(new_node)
+    # ================ Tree Traversal ================
+    def preorder(self):
+        """ Generate a preorder traversal of Positions in tree."""
+        if not self.is_empty():
+            for pos in self._subtree_preorder(self.root()):
+                yield pos
+
+    def _subtree_preorder(self, pos):
+        """ Generate a preorder traversal of Positions in subtree at pos."""
+        yield pos
+        for child in self.children(pos):
+            for child_child in self._subtree_preorder(child):
+                yield child_child
+
+    def postorder(self):
+        """ Generate a postorder traversal of Positions in tree."""
+        if not self.is_empty():
+            for pos in self._subtree_postorder(self.root()):
+                yield pos
+
+    def _subtree_postorder(self, pos):
+        for child in self.children(pos):
+            for child_child in self._subtree_postorder(child):
+                yield child_child
+        yield pos
+
+    def bfs(self):
+        """ Generate a breadth-first iteration of Positions in tree."""
+        if not self.is_empty():
+            queue = []
+            queue.append(self.root())
+
+            while len(queue) != 0:
+                pos = queue.pop(0)
+                yield pos
+                for child in self.children(pos):
+                    queue.append(child)
+
+    def dfs(self):
+        """ Generate a depth-first iteration of Positions in tree."""
+        if not self.is_empty():
+            stack = []
+            stack.append(self.root())
+
+            while len(stack) != 0:
+                pos = stack.pop()
+                yield pos
+                for child in self.children(pos):
+                    stack.append(child)
+
+
+
+
+
+
+    # def _insert_between(self, pos_parent, pos_child, e):
+    #     """ Insert new Position with element e in between pos_parent and pos_child.
+    #     pos_child will be a child of the new Position, and the new Position will
+    #     be a child of pos_parent.
+    #     Return Position of new node.
+    #     """
+    #
+    #     parent_node = self._validate(pos_parent)
+    #     child_node = self._validate(pos_child)
+    #     # Check that parent-child relationship holds.
+    #     if not child_node in parent_node._children:
+    #         raise ValueError('pos_parent is not a parent of pos_child')
+    #     self._size += 1
+    #     new_node = self._Node(e, parent_node)
+    #     child_node._parent = new_node
+    #     return self._make_position(new_node)
