@@ -18,7 +18,7 @@ class Tree:
     def root(self):
         raise NotImplementedError()
 
-    def parent(self):
+    def parent(self, pos):
         raise NotImplementedError()
 
     def children(self, pos):
