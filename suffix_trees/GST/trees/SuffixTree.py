@@ -70,6 +70,10 @@ def test3():
 def test4():
     t = get_tree_1()
     t._delete_tree()
+    t._add()
 
-test4()
+def test5():
+    t = get_tree_1()
+    print(t.height())
+test5()
 

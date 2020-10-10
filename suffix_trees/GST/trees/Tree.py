@@ -37,16 +37,15 @@ class TreeADT:
         return self.root() == pos
 
     def is_leaf(self, pos):
-        return self.num_children() == 0
+        return self.num_children(pos) == 0
 
     def is_empty(self):
         return len(self) == 0
 
-    def height(self, pos):
+    def height(self, pos=None):
         """ Return height of tree rooted at pos."""
         if pos is None:
-            p = self.root()
-
+            pos = self.root()
         if self.is_leaf(pos):
             return 0
         else:
@@ -89,7 +88,7 @@ class Tree(TreeADT):
         Returns _Node object.
         """
         if not isinstance(pos, self.Position):
-            raise TypeError("pos must be of Position type")
+            raise TypeError("pos must be of Position type. pos type:", type(pos))
 
         if pos._container is not self:
             raise ValueError('pos does not belong to this container')
@@ -117,7 +116,7 @@ class Tree(TreeADT):
     def __len__(self):
         return self._size
 
-    # ================ Accessors ================
+    # ================ Accessors functions ================
     def root(self):
         """Return root Position of tree. """
         return self._make_position(self._root)
@@ -182,7 +181,7 @@ class Tree(TreeADT):
         # node is a leaf node
         if len(node._children) == 0:
             if not node is self._root:
-                del node._parent._children[node]
+                del node._parent._children[node]    # delete node from children dict.
             node._parent = node     # deprecate node.
             self._size -= 1
             return node._element
@@ -197,13 +196,38 @@ class Tree(TreeADT):
             else:
                 parent = node._parent
                 parent._children[child] = child
-                del parent._children[node]
+                del parent._children[node]  # delete node from children dict.
                 print("parent node: ", parent)
                 print('parent node children: ', parent._children)
 
             self._size -= 1
             node._parent = node         # deprecate node.
             return node._element
+
+    def _attach_at(self, pos, tree):
+        """ Insert root of 'tree' to pos as child of pos.
+            Set tree instance to none after insertion.
+        """
+        parent_node = self._validate(pos)
+        if not type(self) is type(tree):
+            raise TypeError(f'Trees are not of same type. Self type: {type(self)}, tree type: {type(tree)}')
+
+        self._size += len(tree)
+
+        if not tree.is_empty():
+            root_tree_node = tree._root
+            root_tree_node._parent = parent_node
+            parent_node._children[root_tree_node] = root_tree_node
+            tree._root = None   # set tree instance to none.
+            tree._size = 0
+
+    def _attach_between(self, parent_pos, child_pos, tree):
+        """ Insert root of 'tree' as child of parent_pos, and make child_pos's parent this root.
+            Set tree instance to none after insertion.
+        """
+        # todo
+        pass
+
 
     def _delete_tree(self):
         if not self.is_empty():
