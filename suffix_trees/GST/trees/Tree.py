@@ -78,6 +78,9 @@ class Tree(TreeADT):
 
         def __eq__(self, other):
             return type(other) is type(self) and other._node is self._node
+
+        def __repr__(self):
+            return str(self._node)
     # === End Position Class ===
 
     # ================ Wrapper Functions ================
@@ -166,7 +169,7 @@ class Tree(TreeADT):
         return old
 
     def _remove(self, pos):
-        """ Delete the node at Position pos.
+        """ Remove the node at Position pos.
         If pos has a single child, make the child's parent pos.
         If pos has more than one child, throw error.
         Return element that was stored at pos.
@@ -176,31 +179,36 @@ class Tree(TreeADT):
         if self.num_children(pos) > 1:
             raise ValueError('pos have more than one child:', pos._node._element, list(pos._node._children.values()))
 
-        child = list(node._children.values())[0] if len(node._children) == 1 else None
-        print("child type: ", type(child))
-        if child is not None:
-            child._parent = node._parent
-        # If node was root, set root to child.
-        if node is self._root:
-            self._root = child
-        # node was an internal node.
-        else:
-            parent = node._parent
-            for child in node._children:
-                parent._children[child] = node._children.pop(child)
+        # node is a leaf node
+        if len(node._children) == 0:
+            if not node is self._root:
+                del node._parent._children[node]
+            node._parent = node     # deprecate node.
+            self._size -= 1
+            return node._element
 
-        self._size -= 1
-        node._parent = node         # deprecate node.
-        return node._element
+        # node is an internal node with one child.
+        else:
+            child = list(node._children.values())[0]
+            # node is root node (i.e. does not have parent.)
+            if node is self._root:
+                self._root = child
+            # node has parent node
+            else:
+                parent = node._parent
+                parent._children[child] = child
+                del parent._children[node]
+                print("parent node: ", parent)
+                print('parent node children: ', parent._children)
+
+            self._size -= 1
+            node._parent = node         # deprecate node.
+            return node._element
 
     def _delete_tree(self):
         if not self.is_empty():
             for pos in self.postorder():
-                print("removing: ", pos._node._element)
                 self._remove(pos)
-                print('BFS of tree after removing', pos._node._element)
-                for n in self.bfs():
-                    print(n.element())
 
     # ================ Tree Traversal ================
     def preorder(self):

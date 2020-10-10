@@ -13,6 +13,12 @@ class SuffixTree(Tree):
 
 
 def get_tree_1():
+    '''
+              -- a --
+         -b-     -c-      d-
+       -e-
+     -f--g-
+    '''
     t = SuffixTree('a')
     root = t.root()
     b = t._add(root, 'b')
