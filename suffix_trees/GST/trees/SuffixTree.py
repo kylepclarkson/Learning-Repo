@@ -44,9 +44,39 @@ class SuffixTree(Tree):
         # No match found.
         return pos
 
-    def insert_prefix(self, prefix):
+    def insert_prefix(self, prefix, idx):
         """ Insert prefix into current tree.
         """
+        parent = self.find_matching_node(prefix)
+        print('idx: ', idx, ' prefix: ', prefix, ' parent: ', parent)
+        for child in self.children(parent):
+            print('child label: ', child.element()._label)
+            if child.element()._label[0] == prefix[0]:
+                print('match found')
+                # Intermediate node is added between parent and child.
+                j = 0
+                while j < len(child.element()._label) and \
+                    child.element()._label[j] == prefix[j]:
+                    j += 1
+                # create intermediate node with label being matching parts between prefix and child's label.
+
+                # Update tree structure
+                intermediate_node = self._add(parent, self._SuffixNode(prefix[:j], -1))
+                child._parent = intermediate_node
+                intermediate_node._children[child] = child
+
+                del parent._children[child]
+
+                # Set label of child node to be unmatched part of child label.
+                child.element()._label = child.element()._label[j:]
+                # create new leaf node containing unmatched part of suffix.
+                self._add(intermediate_node, self._SuffixNode(prefix[j+1:], idx))
+                # break from for loop.
+                break
+
+
+        # New node is inserted as child of parent.
+        self._add(parent, self._SuffixNode(prefix, idx))
 
     def naive_construction(self, string):
         """ A O(n^2) algorithm to construct a suffix tree for string with
@@ -58,16 +88,11 @@ class SuffixTree(Tree):
         # ensure string ends with '$' character (termination.)
         if not string.endswith('$'):
             string += '$'
-        # insert entire string as prefix.
-        self._add(self.root(), self._SuffixNode(string, 0))
 
-        node = self.find_matching_node(string[1:])
-        print('pos:', node)
-
-        # insert all other prefixes
-        # for i in range(1, len(string)):
-        #     # Find position to insert prefix.
-        #     prefix = string[i:]
+        # Insert all prefixes.
+        for i in range(len(string)):
+            self.insert_prefix(string[i:], i)
+            print("After insert i: ", i, list(self.bfs()))
 
 
 
@@ -137,7 +162,7 @@ def test5():
 
 def test6():
     t = SuffixTree()
-    t.naive_construction("xabxa")
+    t.naive_construction("xabxac")
 
     print(list(t.bfs()))
 

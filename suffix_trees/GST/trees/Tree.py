@@ -205,10 +205,11 @@ class Tree(TreeADT):
             return node._element
 
     def _attach_at(self, pos, tree):
-        """ Insert root of 'tree' to pos as child of pos.
+        """ Insert root of 'tree' as child of pos.
             Set tree instance to none after insertion.
         """
         parent_node = self._validate(pos)
+
         if not type(self) is type(tree):
             raise TypeError(f'Trees are not of same type. Self type: {type(self)}, tree type: {type(tree)}')
 
