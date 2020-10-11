@@ -22,13 +22,16 @@ class SuffixTree(Tree):
         """
         Tree.__init__(self, "")
 
-    # ======== Accessor Functions ========
-    def find_matching_node(self, string, pos=None, start_idx=0):
+    # ================ Accessor Functions ================
+    def path_to_matching_prefix(self, string, pos=None, start_idx=0, path=None):
         """ Search through tree to find a node whose label matches string[start_idx:len(_label)].
-        Returns node that matches string partially.
+        Returns Path traced from root to node node that matches .
         """
+        if path is None:
+            path = []
         if pos is None:
             pos = self.root()
+            path.append(pos)
 
         for child in self.children(pos):
             # labels match
@@ -36,47 +39,50 @@ class SuffixTree(Tree):
                 child_label = child.element()._label
                 # Labels fully match, continue search with child node.
                 if child_label == string[start_idx: len(child_label)]:
-                    return self.find_matching_node(string, pos=child, start_idx=len(child_label-1))
-                # Label partially matches, return child node.
+                    return path.append(self.path_to_matching_prefix(string, pos=child, start_idx=len(child_label)))
+                # Label partially matches, return parent node.
                 else:
-                    return child
+                    return path
+
 
         # No match found.
-        return pos
+        return path
 
-    def insert_prefix(self, prefix, idx):
+    def insert_suffix(self, prefix, idx):
         """ Insert prefix into current tree.
         """
-        parent = self.find_matching_node(prefix)
-        print('idx: ', idx, ' prefix: ', prefix, ' parent: ', parent)
-        for child in self.children(parent):
-            print('child label: ', child.element()._label)
-            if child.element()._label[0] == prefix[0]:
-                print('match found')
+        parent_pos = self.path_to_matching_prefix(prefix)[-1]
+
+        has_inserted = False
+        for child_pos in self.children(parent_pos):
+            if child_pos.element()._label[0] == prefix[0]:
                 # Intermediate node is added between parent and child.
                 j = 0
-                while j < len(child.element()._label) and \
-                    child.element()._label[j] == prefix[j]:
+                while j < len(child_pos.element()._label) and \
+                    child_pos.element()._label[j] == prefix[j]:
                     j += 1
-                # create intermediate node with label being matching parts between prefix and child's label.
 
                 # Update tree structure
-                intermediate_node = self._add(parent, self._SuffixNode(prefix[:j], -1))
-                child._parent = intermediate_node
-                intermediate_node._children[child] = child
+                intermediate_pos = self._add(parent_pos, self._SuffixNode(prefix[:j], -1))
+                intermediate_node = self._validate(intermediate_pos)
 
-                del parent._children[child]
+                child_node = self._validate(child_pos)
+                child_node._parent = intermediate_node
+                intermediate_node._children[child_node] = child_node
+                parent_node = self._validate(parent_pos)
+                del parent_node._children[child_node]
 
                 # Set label of child node to be unmatched part of child label.
-                child.element()._label = child.element()._label[j:]
+                child_pos.element()._label = child_pos.element()._label[j:]
                 # create new leaf node containing unmatched part of suffix.
-                self._add(intermediate_node, self._SuffixNode(prefix[j+1:], idx))
+                self._add(intermediate_pos, self._SuffixNode(prefix[j:], idx))
                 # break from for loop.
+                has_inserted = True
                 break
 
-
         # New node is inserted as child of parent.
-        self._add(parent, self._SuffixNode(prefix, idx))
+        if not has_inserted:
+            self._add(parent_pos, self._SuffixNode(prefix, idx))
 
     def naive_construction(self, string):
         """ A O(n^2) algorithm to construct a suffix tree for string with
@@ -91,8 +97,7 @@ class SuffixTree(Tree):
 
         # Insert all prefixes.
         for i in range(len(string)):
-            self.insert_prefix(string[i:], i)
-            print("After insert i: ", i, list(self.bfs()))
+            self.insert_suffix(string[i:], i)
 
 
 
@@ -165,6 +170,7 @@ def test6():
     t.naive_construction("xabxac")
 
     print(list(t.bfs()))
+    print(t.height())
 
 test6()
 

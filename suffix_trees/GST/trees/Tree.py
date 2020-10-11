@@ -51,7 +51,9 @@ class TreeADT:
         else:
             return 1 + max(self.height(c) for c in self.children(pos))
 
-""" The Tree data structure. """
+""" 
+ ================ The Tree data structure. ================
+"""
 class Tree(TreeADT):
     class _Node:
         """ A nonpublic wrapper for storing a node. """
