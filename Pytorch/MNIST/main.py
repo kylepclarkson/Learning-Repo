@@ -3,11 +3,19 @@ import torch
 """
 TODO 
 
-    - Read in data, 
-    - Define network 
-    - Training loop
-    - Function for plotting learning curve
-    - Func for running test set, counting validations. 
+    - Prepare dataset
+        - Get training, testing data
+        - Apply transforms to sets
+            Compute mean, stddev
+        - 
+        
+    - Build network
+        - Data is grayscaled => One input channel. 
+    
+    - Util functions:
+        - Plot sample (image)
+        - Validation test
+        
 
 """
 
