@@ -1,3 +1,4 @@
+import os
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -11,11 +12,12 @@ class AppaNet(nn.Module):
         - Define forward function
         - Define loading/saving functions
     """
-    def __init__(self, name, checkpoint_dir):
+    def __init__(self, name='appa_net', checkpoint_dir='tmp/mnist'):
         super(AppaNet, self).__init__()
 
         self.name = name
         self.checkpoint_dir = checkpoint_dir
+        self.checkpoint_file = os.path.join(self.checkpoint_dir, self.name+'_mnist')
 
         # === Construct network ===
         # convolve: 1x28x28 --> 8x28x28
@@ -62,7 +64,7 @@ class AppaNet(nn.Module):
 
 def save_checkpoint(model):
     print(f'=== Saving model {model.name} checkpoint === ')
-    torch.save(model.state_dict(), model.checkpoint_dir)
+    torch.save(model.state_dict(), model.checkpoint_file)
 
 def load_checkpoint(model):
     print(f'=== Loading model {model.name} checkpoint ===')
