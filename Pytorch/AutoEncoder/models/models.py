@@ -1,11 +1,16 @@
+import os
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
 class LittmanNet(nn.Module):
 
-    def __init__(self):
+    def __init__(self, name='Littman', checkpoint_dir='saved_models/'):
         super(LittmanNet, self).__init__()
+
+        self.name = name
+        self.checkpoint_dir = checkpoint_dir
+        self.checkpoint_file = os.path.join(self.checkpoint_dir, self.name+'_cifar10.pt')
 
         # Method for up sampling image.
         self.up_sample_mode = 'bicubic'
@@ -70,4 +75,19 @@ class LittmanNet(nn.Module):
         x = self.up_pool1(F.relu(self.conv3(x)))
         x = self.up_pool2(F.relu(self.conv4(x)))
         return x
+
+    def save_checkpoint(self):
+        save_checkpoint(self)
+
+    def load_checkpoint(self):
+        load_checkpoint(self)
+
+
+def save_checkpoint(model):
+    print(f'=== Saving model {model.name} checkpoint === ')
+    torch.save(model.state_dict(), model.checkpoint_file)
+
+def load_checkpoint(model):
+    print(f'=== Loading model {model.name} checkpoint ===')
+    return torch.load(model.checkpoint_file)
 
