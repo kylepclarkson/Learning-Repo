@@ -55,7 +55,7 @@ class LittmanNet(nn.Module):
         x = self.down_pool1(F.relu(self.conv1(x)))
         x = self.down_pool2(F.relu(self.conv2(x)))
         # reshape
-        x = x.view(1, 320)
+        x = x.view(-1, 320)
         x = F.relu(self.fc1(x))
         x = self.fc2(x)
         return x
@@ -66,8 +66,7 @@ class LittmanNet(nn.Module):
         x = F.relu(self.fc3(x))
         x = F.relu(self.fc4(x))
         # reshape
-        # TODO change first dimension to handle batchsize.
-        x = x.view(1, 5, 8, 8)
+        x = x.view(-1, 5, 8, 8)
         x = self.up_pool1(F.relu(self.conv3(x)))
         x = self.up_pool2(F.relu(self.conv4(x)))
         return x
