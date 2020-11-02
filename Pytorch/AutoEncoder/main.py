@@ -25,7 +25,6 @@ def training_loop(n_epochs,
         for imgs, _ in train_loader:
             # move tensors to device
             imgs = imgs.to(model.device)
-
             imgs_out = model(imgs)
 
             loss = loss_function(imgs_out, imgs)
@@ -35,13 +34,11 @@ def training_loop(n_epochs,
             training_loss += loss.item()
 
         running_loss.append(training_loss)
+
         # print training and validation losses. save if model achieve better accuracy rate.
         if epoch % 5 == 0 or epoch == 1 or epoch == n_epochs:
-            # loss = training_loss / len(train_loader)
-
             validation_loss = 0.0
-
-            for imgs, _ in train_loader:
+            for imgs, _ in val_loader:
                 # move tensors to device
                 imgs = imgs.to(model.device)
 
@@ -54,7 +51,6 @@ def training_loop(n_epochs,
                 validation_loss += loss.item()
 
             print(f'{datetime.datetime.now()} Epoch: {epoch}, Training loss: {training_loss:.3f}')
-            # validation_loss /= len(val_loader)
             print(f'{datetime.datetime.now()} Epoch: {epoch}, Validation loss: {validation_loss:.3f}')
 
             if validation_loss > best_val_loss:
@@ -70,6 +66,7 @@ def get_datasets(data_path, batch_size=32):
 
     transform = torchvision.transforms.Compose([
         torchvision.transforms.ToTensor(),
+        torchvision.transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
     ])
     trainset_cifar = torchvision.datasets.CIFAR10(data_path, transform=transform, train=True, download=True)
     validset_cifar = torchvision.datasets.CIFAR10(data_path, transform=transform, train=False, download=True)
@@ -84,7 +81,6 @@ def train_model(n_epochs,
                 loss_function,
                 training_loader,
                 validation_loader):
-
 
 
     running_loss = training_loop(n_epochs=n_epochs,
@@ -102,31 +98,32 @@ if __name__ == '__main__':
     classes = ('plane', 'car', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
 
     # Create model
-    model = models.models.LittmanNet(name='LittmanNet_2')
-    model.cuda()
+    model = models.models.LittmanNet(name='LittmanNet')
+    model.to(model.device)
+    
 
     optimizer = torch.optim.Adam(model.parameters(), lr=0.005)
     loss_function = torch.nn.L1Loss()
-    n_epochs = 1_000
+    n_epochs = 20
 
-    _, _, train_loader, val_loader = get_datasets(data_path)
-    train_model(n_epochs=n_epochs,
-                model=model,
-                optimizer=optimizer,
-                loss_function=loss_function,
-                training_loader=train_loader,
-                validation_loader=val_loader)
+    train_set, val_set, train_loader, val_loader = get_datasets(data_path, batch_size=16)
+    # train_model(n_epochs=n_epochs,
+    #             model=model,
+    #             optimizer=optimizer,
+    #             loss_function=loss_function,
+    #             training_loader=train_loader,
+    #             validation_loader=val_loader)
 
     # model.load_checkpoint()
     # model.eval()
 
     # _, valset, _, _ = get_datasets(data_path)
-    #
+
     # with torch.no_grad():
     #     img, _ = valset[0]
     #     img = img.to(model.device)
     #     # utils.imshow(img.cpu())
-    #
+
     #     img_out = model(img.unsqueeze(0)).squeeze(0)
     #     print(f'Img1 shape, img2 shape: {img.shape}, {img_out.shape}')
     #     utils.plot_side_by_side(img.cpu(), 'Original Image', img_out.cpu().clamp(0, 1), 'Generated Image')
