@@ -21,8 +21,47 @@ class Sreeni(nn.Module):
         self.device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
         self.to(self.device)
         
+        # === Encoder ===
+        # convolve 3x32x32 --> 6x32x32
+        self.conv1 = nn.Conv2d(3, 6, kernel_size=3, padding=1)
+        # downsample 6x32x32 --> 6x16x16
+        self.down_pool1 = nn.MaxPool2d(2, 2)
+        # convolve 6x16x16 --> 8x16x16
+        self.conv2 = nn.Conv2d(6, 8, kernel_size=3, padding=1)
+        # downsample 8x16x16 --> 8x8x8
+        self.down_pool2 = nn.MaxPool2d(2, 2)
+        # flatten 8x8x8 --> 1x512
+        # dense 1x512 --> 1x128
+        self.fc1 = nn.Linear(512, 128)
+        # dense 1x128 --> 1x24
+        self.fc2 = nn.Linear(128, 24)
         
-
+        # === Decoder ===
+        # dense 1x24 --> 1x128
+        self.fc3 = nn.Linear(24, 128)
+        # dense 1x128 --> 1x512
+        self.fc4 = nn.Linear(128, 512)        
+        # reshape 1x512 --> 8x8x8
+        # convolveT 8x8x8 --> 6x16x16
+        self.convT1 = nn.ConvTranspose2d(8, 6, kernel_size=3, padding=2)
+        # convolveT 6x16x16 --> 3x32x32
+        self.convT2 = nn.ConvTranspose2d(6, 3, kernel_size=3, padding=2)
+        
+    def encode(self, x):
+        # Encode x. Returns unactivated code. 
+        x = self.down_pool1(F.relu(self.conv1(x)))
+        x = self.down_pool2(F.relu(self.conv2(x)))
+        # reshape
+        x = x.view(-1, 512)
+        x = F.relu(self.fc1(x))
+        x = self.fc(2)
+        return x
+    
+    def decode(self, x):
+        # Decode x.
+        x = self.fcT1()
+        
+        
     def summary(self):
         self.to(self.device)
         return summary(self, (3, 32, 32))
