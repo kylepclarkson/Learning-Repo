@@ -12,6 +12,84 @@ import torch.nn.functional as F
 
 from torchsummary import summary
 
+class Clapton(nn.Module):
+    
+    def __init__(self, name='Clapton', ckp_dir='saved_models/'):
+        super(Clapton, self).__init__()
+        self.set_model_name(name, ckp_dir)
+        
+        # === Encoder ===
+        # convolve 1x28x28 --> 32x28x28        
+        self.conv1 = nn.Conv2d(1, 32, kernel_size=3, padding=1)
+        # downsample 32x28x28 --> 32x14x14
+        self.downsample1 = nn.MaxPool2d(2, 2)
+        # convolve 32x14x14 --> 32x14x14
+        self.conv2 = nn.Conv2d(32, 32, kernel_size=3, padding=1)
+        # downsample 32x14x14 --> 32x7x7
+        self.downsample2 = nn.MaxPool2d(2, 2)
+        # convolve 32x7x7 --> 32x7x7
+        self.conv3 = nn.Conv2d(32, 32, kernel_size=3, padding=1)
+        # flatten 32x7x7 --> 1x1568
+        # dense 1x392 --> 1x24
+        self.fc1 = nn.Linear(32*7*7, 24)
+        
+        # === Decoder ===
+        # dense 1x24 --> 1x1568
+        self.fc2 = nn.Linear(24, 32*7*7)
+        # reshape 1x1568 --> 32x7x7
+        # deconvolve 32x7x7 --> 32x7x7
+        self.deconv1 = nn.ConvTranspose2d(32, 32, kernel_size=1, stride=1)
+        # deconvolve 32x7x7 --> 32x14x14
+        self.deconv2 = nn.ConvTranspose2d(32, 32, kernel_size=2, stride=2)
+        # deconvolve 32x14x14 --> 1x28x28
+        self.deconv3 = nn.ConvTranspose2d(32, 1, kernel_size=2, stride=2)
+        
+        
+    def forward(self, x):
+        x = self.encode(x)
+        x = self.decode(F.relu(x))
+        return x
+    
+    def encode(self, x):
+        
+        x = self.downsample1(F.relu(self.conv1(x)))
+        x = self.downsample2(F.relu(self.conv2(x)))
+        x = F.relu(self.conv3(x))
+        # reshape
+        x = x.view(-1, 32*7*7)
+        x = self.fc1(x)
+        return x
+    
+    def decode(self, x):
+        x = F.relu(self.fc2(x))
+        # reshape
+        x = x.view(-1, 32, 7, 7)
+        x = F.relu(self.deconv1(x))
+        x = F.relu(self.deconv2(x))
+        x = self.deconv3(x)
+        return x
+                
+    def summary(self):
+        self.to(self.device)
+        return summary(self, (1, 28, 28))
+    
+    def save_checkpoint(self):
+        save_checkpoint(self)
+
+    def load_checkpoint(self):
+        load_checkpoint(self)        
+        
+    def set_model_name(self, name, ckp_dir):
+        self.name = name
+        self.ckp_dir = ckp_dir
+        self.ckp_file = os.path.join(self.ckp_dir, self.name+'_mnist.pt')
+        
+        # Set device for model.
+        self.device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+        self.to(self.device)
+        
+# ======== End Clapton ========
+
 class ChanSmall(nn.Module):
     
     def __init__(self, name='ChanSmall', ckp_dir='saved_models/'):

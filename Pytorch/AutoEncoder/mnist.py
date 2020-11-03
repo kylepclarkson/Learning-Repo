@@ -20,8 +20,8 @@ def train(n_epochs,
           loss_function,
           train_loader,
           val_loader):
-    print('Training. Device: ', model.device)
-    best_val_loss = 0
+    print(f'Training model {model.name}. Device: {model.device}')
+    best_val_loss = np.Infinity
     running_loss = []
 
     for epoch in range(1, n_epochs+1):
@@ -47,29 +47,42 @@ def train(n_epochs,
 
         running_loss.append(training_loss)
 
-        # print training and validation losses. save if model achieve better accuracy rate.
+        # print training and validation losses. 
+        # 
         if epoch % 5 == 0 or epoch == 1 or epoch == n_epochs:
             validation_loss = 0.0
-            for imgs, _ in val_loader:
-                # move tensors to device
-                imgs = imgs.to(model.device)
-
-                imgs_out = model(imgs)
-
-                loss = loss_function(imgs_out, imgs)
-                optimizer.zero_grad()
-                loss.backward()
-                optimizer.step()
-                validation_loss += loss.item()
+            with torch.no_grad():
+                for imgs, _ in val_loader:
+                    # move tensors to device
+                    imgs = imgs.to(model.device)
+    
+                    # zero gradient.
+                    # optimizer.zero_grad()
+                    # forward, backward, update
+                    imgs_out = model(imgs)
+    
+                    loss = loss_function(imgs_out, imgs)
+                    # loss.backward()
+                    # optimizer.step()
+                    
+                    validation_loss += loss.item()
 
             print(f'{datetime.datetime.now()} Epoch: {epoch}, Training loss: {training_loss:.3f}')
             print(f'{datetime.datetime.now()} Epoch: {epoch}, Validation loss: {validation_loss:.3f}')
 
-            if validation_loss > best_val_loss:
+            if validation_loss < best_val_loss:
                 model.save_checkpoint()
                 best_val_loss = validation_loss
 
     return running_loss
+
+def test_model(model, val_set):
+    # Sample random image from validation set. 
+    # Display original and reconstruction. 
+    idx = np.random.choice(len(val_set))
+    x, _ = val_set[idx]
+    y = model_out(model, x)
+    imgs(x, y)
 
 def model_out(model, img):
     model.eval()
@@ -103,8 +116,8 @@ def imshow(img, mean=0, std=1):
     plt.imshow(np.transpose(npimg, (1,2,0)))
     plt.show()
 
-def plot_loss(training_epochs, losses):
-    plt.plot(training_epochs, losses)
+def plot_loss(losses):
+    plt.plot(np.arange(1, len(losses)+1), losses)
     plt.title('Training loss vs Epoch')
     
 
@@ -115,7 +128,7 @@ transform = torchvision.transforms.Compose([
     torchvision.transforms.ToTensor(),
 ])
 
-batch_size = 8
+batch_size =  512
 train_set = torchvision.datasets.MNIST(data_path, train=True, download=True,  transform=transform)
 val_set = torchvision.datasets.MNIST(data_path, train=False, download=True,  transform=transform)
 
@@ -124,12 +137,13 @@ val_loader = torch.utils.data.DataLoader(val_set, batch_size=batch_size, shuffle
 
 # Set model, optimizer, loss function. 
 # model = models.mnist_models.Chan()
-model = models.mnist_models.ChanSmall()
+# model = models.mnist_models.ChanSmall()
+model = models.mnist_models.Clapton()
 
 model.to(model.device)
 
 opt = torch.optim.Adam(model.parameters(), lr=0.001)
-loss_fn = torch.nn.MSELoss()
+loss_fn = torch.nn.L1Loss()
 n_epochs = 50
 
 
