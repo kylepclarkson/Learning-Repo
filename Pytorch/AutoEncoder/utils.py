@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 def plot_side_by_side(img1, title1, img2, title2):
 
     fig = plt.figure()
-    ax1 = fig.add_subplot(211)
-    ax2 = fig.add_subplot(212)
+    ax1 = fig.add_subplot(121)
+    ax2 = fig.add_subplot(122)
     ax1.title.set_text('Input Image')
     ax1.imshow(np.transpose(img1,(1,2,0)))
 
@@ -14,8 +14,9 @@ def plot_side_by_side(img1, title1, img2, title2):
 
     plt.show()
 
-def imshow(img):
+def imshow(img, mean=1, std=1):
     npimg = img.numpy()
+    npimg = npimg*std + mean
     # Display image by reordering channels to match pyplot's expectation
     plt.imshow(np.transpose(npimg, (1,2,0)))
     plt.show()

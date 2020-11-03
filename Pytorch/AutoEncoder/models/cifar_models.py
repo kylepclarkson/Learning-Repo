@@ -7,7 +7,7 @@ from torchsummary import summary
 
 class Sreeni(nn.Module):
     
-    def __init__(self, name='Sreeni', checkpoint_dir='saved_mdoels/'):
+    def __init__(self, name='Sreeni', checkpoint_dir='saved_models/'):
         super(Sreeni, self).__init__()
 
         self.name = name
@@ -27,40 +27,50 @@ class Sreeni(nn.Module):
         # downsample 6x32x32 --> 6x16x16
         self.down_pool1 = nn.MaxPool2d(2, 2)
         # convolve 6x16x16 --> 8x16x16
-        self.conv2 = nn.Conv2d(6, 8, kernel_size=3, padding=1)
-        # downsample 8x16x16 --> 8x8x8
+        self.conv2 = nn.Conv2d(6, 4, kernel_size=3, padding=1)
+        # downsample 8x16x16 --> 4x8x8
         self.down_pool2 = nn.MaxPool2d(2, 2)
-        # flatten 8x8x8 --> 1x512
-        # dense 1x512 --> 1x128
-        self.fc1 = nn.Linear(512, 128)
+        # flatten 8x8x8 --> 1x256
+        # dense 1x256 --> 1x128
+        self.fc1 = nn.Linear(256, 128)
         # dense 1x128 --> 1x24
         self.fc2 = nn.Linear(128, 24)
         
         # === Decoder ===
         # dense 1x24 --> 1x128
         self.fc3 = nn.Linear(24, 128)
-        # dense 1x128 --> 1x512
-        self.fc4 = nn.Linear(128, 512)        
-        # reshape 1x512 --> 8x8x8
-        # convolveT 8x8x8 --> 6x16x16
-        self.convT1 = nn.ConvTranspose2d(8, 6, kernel_size=3, padding=2)
+        # dense 1x128 --> 1x256
+        self.fc4 = nn.Linear(128, 256)        
+        # reshape 1x256 --> 4x8x8
+        # convolveT 4x8x8 --> 6x16x16
+        self.conv3 = nn.ConvTranspose2d(4, 6, kernel_size=2, stride=2)
         # convolveT 6x16x16 --> 3x32x32
-        self.convT2 = nn.ConvTranspose2d(6, 3, kernel_size=3, padding=2)
+        self.conv4 = nn.ConvTranspose2d(6, 3, kernel_size=2, stride=2)
         
+    def forward(self, x):
+        x = self.decode(self.encode(x))
+        return x
+    
     def encode(self, x):
         # Encode x. Returns unactivated code. 
         x = self.down_pool1(F.relu(self.conv1(x)))
         x = self.down_pool2(F.relu(self.conv2(x)))
         # reshape
-        x = x.view(-1, 512)
+        x = x.view(-1, 256)
         x = F.relu(self.fc1(x))
-        x = self.fc(2)
+        x = self.fc2(x)
         return x
     
     def decode(self, x):
         # Decode x.
-        x = self.fcT1()
-        
+        x = F.relu(x)
+        x = F.relu(self.fc3(x))
+        x = F.relu(self.fc4(x))
+        # reshape
+        x = x.view(-1, 4, 8, 8)
+        x = F.relu(self.conv3(x))
+        x = self.conv4(x)
+        return x
         
     def summary(self):
         self.to(self.device)
@@ -71,6 +81,7 @@ class Sreeni(nn.Module):
 
     def load_checkpoint(self):
         load_checkpoint(self)
+
 
 class LittmanNet(nn.Module):
 

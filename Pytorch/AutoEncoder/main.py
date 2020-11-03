@@ -4,8 +4,8 @@ import numpy as np
 import torch
 import torchvision
 
-import models.models
-import train_utils as utils
+import models.cifar_models
+import utils
 
 def training_loop(n_epochs,
                   model,
@@ -13,7 +13,7 @@ def training_loop(n_epochs,
                   loss_function,
                   train_loader,
                   val_loader):
-    print('Training:')
+    print('Training. Device: ', model.device)
     best_val_loss = 0
     running_loss = []
 
@@ -91,6 +91,12 @@ def train_model(n_epochs,
                                 val_loader=validation_loader)
     return running_loss
 
+def val_model(model, img):
+    model.eval()
+    with torch.no_grad():
+        y = model(img.unsqueeze(0)).squeeze(0)
+        return y
+
 if __name__ == '__main__':
 
     # Get CIFAR10 dataset.
@@ -98,21 +104,24 @@ if __name__ == '__main__':
     classes = ('plane', 'car', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
 
     # Create model
-    model = models.models.LittmanNet(name='LittmanNet')
+    model = models.cifar_models.Sreeni()
     model.to(model.device)
     
 
     optimizer = torch.optim.Adam(model.parameters(), lr=0.005)
-    loss_function = torch.nn.L1Loss()
-    n_epochs = 20
+    loss_function = torch.nn.MSELoss()
+    n_epochs = 30
 
-    train_set, val_set, train_loader, val_loader = get_datasets(data_path, batch_size=16)
-    # train_model(n_epochs=n_epochs,
-    #             model=model,
-    #             optimizer=optimizer,
-    #             loss_function=loss_function,
-    #             training_loader=train_loader,
-    #             validation_loader=val_loader)
+    train_set, val_set, train_loader, val_loader = get_datasets(data_path, batch_size=8)
+    
+# =============================================================================
+#     running_loss = train_model(n_epochs=n_epochs,
+#                  model=model,
+#                  optimizer=optimizer,
+#                  loss_function=loss_function,
+#                  training_loader=train_loader,
+#                  validation_loader=val_loader)
+# =============================================================================
 
     # model.load_checkpoint()
     # model.eval()
