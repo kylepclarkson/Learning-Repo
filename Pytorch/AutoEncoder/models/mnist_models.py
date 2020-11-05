@@ -18,7 +18,7 @@ from torchsummary import summary
 # =====================
 class NetLarge(nn.Module):
     
-    def __init__(self, name='NetLarge', ckp_dir='saved_models/'):
+    def __init__(self, name='NetLarge', ckp_dir='saved_models/mnist/'):
         super(NetLarge, self).__init__()
         self.set_model_name(name, ckp_dir)
         
@@ -83,13 +83,7 @@ class NetLarge(nn.Module):
         load_checkpoint(self)        
         
     def set_model_name(self, name, ckp_dir):
-        self.name = name
-        self.ckp_dir = ckp_dir
-        self.ckp_file = os.path.join(self.ckp_dir, self.name+'_mnist.pt')
-        
-        # Set device for model.
-        self.device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-        self.to(self.device)
+        set_model_name(self, name, ckp_dir)
 
 
 # ==============================
@@ -97,7 +91,7 @@ class NetLarge(nn.Module):
 # ==============================
 class NetLargeDropout(nn.Module):
     
-    def __init__(self, name='NetLargeDropout', ckp_dir='saved_models/'):
+    def __init__(self, name='NetLargeDropout', ckp_dir='saved_models/mnist/'):
         super(NetLargeDropout, self).__init__()
         self.set_model_name(name, ckp_dir)
         
@@ -166,20 +160,14 @@ class NetLargeDropout(nn.Module):
         load_checkpoint(self)        
         
     def set_model_name(self, name, ckp_dir):
-        self.name = name
-        self.ckp_dir = ckp_dir
-        self.ckp_file = os.path.join(self.ckp_dir, self.name+'_mnist.pt')
-        
-        # Set device for model.
-        self.device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-        self.to(self.device)
+        set_model_name(self, name, ckp_dir)
 
 # =====================
 # === Small Network ===
 # =====================
 class NetSmall(nn.Module):
     
-    def __init__(self, name='NetSmall', ckp_dir='saved_models/'):
+    def __init__(self, name='NetSmall', ckp_dir='saved_models/mnist/'):
         super(NetSmall, self).__init__()
         self.set_model_name(name, ckp_dir)
         
@@ -244,13 +232,7 @@ class NetSmall(nn.Module):
         load_checkpoint(self)        
         
     def set_model_name(self, name, ckp_dir):
-        self.name = name
-        self.ckp_dir = ckp_dir
-        self.ckp_file = os.path.join(self.ckp_dir, self.name+'_mnist.pt')
-        
-        # Set device for model.
-        self.device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-        self.to(self.device)
+        set_model_name(self, name, ckp_dir)
 
 # ========================
 # === Testing Networks ===         
@@ -324,13 +306,7 @@ class Clapton(nn.Module):
         load_checkpoint(self)        
         
     def set_model_name(self, name, ckp_dir):
-        self.name = name
-        self.ckp_dir = ckp_dir
-        self.ckp_file = os.path.join(self.ckp_dir, self.name+'_mnist.pt')
-        
-        # Set device for model.
-        self.device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-        self.to(self.device)
+        set_model_name(self, name, ckp_dir)
         
 # ======== End Clapton ========
 
@@ -402,13 +378,7 @@ class ChanSmall(nn.Module):
         load_checkpoint(self)        
         
     def set_model_name(self, name, ckp_dir):
-        self.name = name
-        self.ckp_dir = ckp_dir
-        self.ckp_file = os.path.join(self.ckp_dir, self.name+'_mnist.pt')
-        
-        # Set device for model.
-        self.device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-        self.to(self.device)
+        set_model_name(self, name, ckp_dir)
 
 # === End ChanSmall ===    
 
@@ -481,13 +451,21 @@ class Chan(nn.Module):
         load_checkpoint(self)        
         
     def set_model_name(self, name, ckp_dir):
-        self.name = name
-        self.ckp_dir = ckp_dir
-        self.ckp_file = os.path.join(self.ckp_dir, self.name+'_mnist.pt')
+        set_model_name(self, name, ckp_dir)
+
+# =========================
+# === Utility Functions ===
+# =========================
+
+def set_model_name(model, name, ckp_dir):
+    # Set model's name, and loaction of where to save state dict.
+    model.name = name
+    model.ckp_dir = ckp_dir
+    model.ckp_file = os.path.join(model.ckp_dir, model.name+'_mnist.pt')
         
-        # Set device for model.
-        self.device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-        self.to(self.device)
+    # Set device for model.
+    model.device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+    model.to(model.device)
 
 def save_checkpoint(model):
     print(f'=== Saving model {model.name} checkpoint === ')

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Mon Nov  2 12:04:46 2020
+Created on Wed Nov  4 23:04:42 2020
 
 @author: Kyle
 """
@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 import torch
 import torchvision
 
-import models.mnist_models
+import models.cifar_models
 import utils
 
 def train(n_epochs,
@@ -133,32 +133,27 @@ transform = torchvision.transforms.Compose([
 ])
 
 batch_size =  512
-train_set = torchvision.datasets.MNIST(data_path, train=True, download=True,  transform=transform)
-val_set = torchvision.datasets.MNIST(data_path, train=False, download=True,  transform=transform)
+train_set = torchvision.datasets.CIFAR10(data_path, train=True, download=True,  transform=transform)
+val_set = torchvision.datasets.CIFAR10(data_path, train=False, download=True,  transform=transform)
 
 train_loader = torch.utils.data.DataLoader(train_set, batch_size=batch_size, shuffle=True)
 val_loader = torch.utils.data.DataLoader(val_set, batch_size=batch_size, shuffle=False)
 
-
 # Set model, optimizer, loss function. 
-loss_fn_name = 'L1Loss'
-loss_fn = torch.nn.L1Loss()
-
-# loss_fn_name = 'L2Loss'
-# loss_fn = torch.nn.MSELoss()
-
-# model = models.mnist_models.NetLargeDropout(name=f'NetLargeDropout-{loss_fn_name}')
-# model = models.mnist_models.NetSmall(name=f'NetSmall-{loss_fn_name}')
-model = models.mnist_models.NetLarge(name=f'NetLarge-{loss_fn_name}')
-
+model = models.cifar_models.NetLargeDropout()
 model.to(model.device)
 opt = torch.optim.Adam(model.parameters(), lr=0.001)
 
-n_epochs = 300
+loss_fn_name = 'L1Loss'
+loss_fn = torch.nn.L1Loss()
+
+loss_fn_name = 'L2Loss'
+loss_fn = torch.nn.MSELoss()
+
+n_epochs = 5
 
 # Train model
 train_loss, val_loss = train(n_epochs, model, opt, loss_fn, train_loader, val_loader)
 # Save train, val loss. 
 title_name = f'{model.name}-{loss_fn_name}-Adam'
-plot_loss(train_loss, val_loss, title=title_name, save_loc='plots/mnist/'+title_name)
-
+plot_loss(train_loss, val_loss, title=title_name, save_loc='plots/'+title_name)
