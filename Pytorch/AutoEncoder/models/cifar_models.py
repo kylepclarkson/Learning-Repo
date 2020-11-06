@@ -16,6 +16,7 @@ class NetLarge(nn.Module):
         self.set_model_name(name, ckp_dir)
         
         # === Encoder ===
+        # TODO update comments; 32x32. 
         # convolve 3x28x28 --> 64x28x28        
         self.conv1 = nn.Conv2d(3, 64, kernel_size=3, padding=1)
         # downsample 64x28x28 --> 64x14x14
@@ -28,11 +29,11 @@ class NetLarge(nn.Module):
         self.conv3 = nn.Conv2d(32, 12, kernel_size=3, padding=1)
         # flatten 12x7x7 --> 1x588
         # dense 1x588 --> 1x24
-        self.fc1 = nn.Linear(12*7*7, 24)
+        self.fc1 = nn.Linear(12*8*8, 24)
 
         # === Decoder ===
         # dense 1x24 --> 1x588
-        self.fc2 = nn.Linear(24, 12*7*7)
+        self.fc2 = nn.Linear(24, 12*8*8)
         # reshape 1x588 --> 12x7x7
         # deconvolve 12x7x7 --> 32x7x7
         self.deconv1 = nn.ConvTranspose2d(12, 32, kernel_size=1, stride=1)
@@ -52,14 +53,14 @@ class NetLarge(nn.Module):
         x = self.downsample2(F.relu(self.conv2(x)))
         x = F.relu(self.conv3(x))
         # reshape
-        x = x.view(-1, 12*7*7)
+        x = x.view(-1, 12*8*8)
         x = self.fc1(x)
         return x
     
     def decode(self, x):
         x = F.relu(self.fc2(x))
         # reshape
-        x = x.view(-1, 12, 7, 7)
+        x = x.view(-1, 12, 8, 8)
         x = F.relu(self.deconv1(x))
         x = F.relu(self.deconv2(x))
         x = self.deconv3(x)
@@ -67,7 +68,7 @@ class NetLarge(nn.Module):
                 
     def summary(self):
         self.to(self.device)
-        return summary(self, (3, 28, 28))
+        return summary(self, (3, 32, 32))
     
     def save_checkpoint(self):
         save_checkpoint(self)

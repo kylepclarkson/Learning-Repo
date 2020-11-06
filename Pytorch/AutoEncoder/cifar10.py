@@ -4,6 +4,7 @@ Created on Wed Nov  4 23:04:42 2020
 
 @author: Kyle
 """
+# %% Imports 
 import os
 import datetime
 import numpy as np
@@ -124,7 +125,6 @@ def plot_loss(train_losses, val_losses, title=None, save_loc=None):
         plt.savefig(save_loc)
     plt.show()
     
-
 # Get MNIST datasets
 data_path = 'C:\\Users\\Kyle\\Documents\\GitHub\\data\\'
 
@@ -139,20 +139,22 @@ val_set = torchvision.datasets.CIFAR10(data_path, train=False, download=True,  t
 train_loader = torch.utils.data.DataLoader(train_set, batch_size=batch_size, shuffle=True)
 val_loader = torch.utils.data.DataLoader(val_set, batch_size=batch_size, shuffle=False)
 
-# Set model, optimizer, loss function. 
-# loss_fn_name = 'L2Loss'
-# loss_fn = torch.nn.L1Loss()
 
-loss_fn_name = 'L2Loss'
-loss_fn = torch.nn.MSELoss()
+# %% Train model
 # Set model, optimizer, loss function. 
-model = models.cifar_models.NetLargeDropout(name=f'NetLargeDropout-{loss_fn_name}')
+loss_fn_name = 'L1Loss'
+loss_fn = torch.nn.L1Loss()
+
+# loss_fn_name = 'L2Loss'
+# loss_fn = torch.nn.MSELoss()
+# Set model, optimizer, loss function. 
+# model = models.cifar_models.NetLargeDropout(name=f'NetLargeDropout-{loss_fn_name}')
 # model = models.cifar_models.NetSmall(name=f'NetSmall-{loss_fn_name}')
-# model = models.cifar_models.NetLarge(name=f'NetLarge-{loss_fn_name}')
+model = models.cifar_models.NetLarge(name=f'NetLarge-{loss_fn_name}')
 model.to(model.device)
 
 opt = torch.optim.Adam(model.parameters(), lr=0.001)
-n_epochs = 100
+n_epochs = 300
 
 # Train model
 train_loss, val_loss = train(n_epochs, model, opt, loss_fn, train_loader, val_loader)

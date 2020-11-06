@@ -4,6 +4,7 @@ Created on Mon Nov  2 12:04:46 2020
 
 @author: Kyle
 """
+# %% Imports
 import os
 import datetime
 import numpy as np
@@ -139,15 +140,17 @@ val_set = torchvision.datasets.MNIST(data_path, train=False, download=True,  tra
 train_loader = torch.utils.data.DataLoader(train_set, batch_size=batch_size, shuffle=True)
 val_loader = torch.utils.data.DataLoader(val_set, batch_size=batch_size, shuffle=False)
 
+
+# %% Train model
 # Set model, optimizer, loss function. 
-# loss_fn_name = 'L2Loss'
-# loss_fn = torch.nn.L1Loss()
-
 loss_fn_name = 'L2Loss'
-loss_fn = torch.nn.MSELoss()
+loss_fn = torch.nn.L1Loss()
 
-model = models.mnist_models.NetLargeDropout(name=f'NetLargeDropout-{loss_fn_name}')
-# model = models.mnist_models.NetSmall(name=f'NetSmall-{loss_fn_name}')
+# loss_fn_name = 'L2Loss'
+# loss_fn = torch.nn.MSELoss()
+
+# model = models.mnist_models.NetLargeDropout(name=f'NetLargeDropout-{loss_fn_name}')
+model = models.mnist_models.NetSmall(name=f'NetSmall-{loss_fn_name}')
 # model = models.mnist_models.NetLarge(name=f'NetLarge-{loss_fn_name}')
 
 model.to(model.device)

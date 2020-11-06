@@ -79,8 +79,8 @@ class NetLarge(nn.Module):
     def save_checkpoint(self):
         save_checkpoint(self)
 
-    def load_checkpoint(self):
-        load_checkpoint(self)        
+    def load_checkpoint(self, path=None):
+        load_checkpoint(self, path) if path is not None else self.ckp_file
         
     def set_model_name(self, name, ckp_dir):
         set_model_name(self, name, ckp_dir)
@@ -156,8 +156,8 @@ class NetLargeDropout(nn.Module):
     def save_checkpoint(self):
         save_checkpoint(self)
 
-    def load_checkpoint(self):
-        load_checkpoint(self)        
+    def load_checkpoint(self, path=None):
+        load_checkpoint(self, path) if path is not None else self.ckp_file
         
     def set_model_name(self, name, ckp_dir):
         set_model_name(self, name, ckp_dir)
@@ -228,8 +228,8 @@ class NetSmall(nn.Module):
     def save_checkpoint(self):
         save_checkpoint(self)
 
-    def load_checkpoint(self):
-        load_checkpoint(self)        
+    def load_checkpoint(self, path=None):
+        load_checkpoint(self, path) if path is not None else self.ckp_file
         
     def set_model_name(self, name, ckp_dir):
         set_model_name(self, name, ckp_dir)
@@ -302,8 +302,8 @@ class Clapton(nn.Module):
     def save_checkpoint(self):
         save_checkpoint(self)
 
-    def load_checkpoint(self):
-        load_checkpoint(self)        
+    def load_checkpoint(self, path=None):
+        load_checkpoint(self, path) if path is not None else self.ckp_file
         
     def set_model_name(self, name, ckp_dir):
         set_model_name(self, name, ckp_dir)
@@ -374,8 +374,8 @@ class ChanSmall(nn.Module):
     def save_checkpoint(self):
         save_checkpoint(self)
 
-    def load_checkpoint(self):
-        load_checkpoint(self)        
+    def load_checkpoint(self, path=None):
+        load_checkpoint(self, path) if path is not None else self.ckp_file
         
     def set_model_name(self, name, ckp_dir):
         set_model_name(self, name, ckp_dir)
@@ -447,8 +447,8 @@ class Chan(nn.Module):
     def save_checkpoint(self):
         save_checkpoint(self)
 
-    def load_checkpoint(self):
-        load_checkpoint(self)        
+    def load_checkpoint(self, path=None):
+        load_checkpoint(self, path) if path is not None else self.ckp_file
         
     def set_model_name(self, name, ckp_dir):
         set_model_name(self, name, ckp_dir)
@@ -471,8 +471,8 @@ def save_checkpoint(model):
     print(f'=== Saving model {model.name} checkpoint === ')
     torch.save(model.state_dict(), model.ckp_file)
 
-def load_checkpoint(model):
+def load_checkpoint(model, path):
     print(f'=== Loading model {model.name} checkpoint ===')
-    return torch.load(model.ckp_file)
+    model.load_state_dict(torch.load(path))
 
     
