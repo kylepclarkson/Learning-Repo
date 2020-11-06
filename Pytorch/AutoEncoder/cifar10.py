@@ -140,20 +140,22 @@ train_loader = torch.utils.data.DataLoader(train_set, batch_size=batch_size, shu
 val_loader = torch.utils.data.DataLoader(val_set, batch_size=batch_size, shuffle=False)
 
 # Set model, optimizer, loss function. 
-model = models.cifar_models.NetLargeDropout()
-model.to(model.device)
-opt = torch.optim.Adam(model.parameters(), lr=0.001)
-
-loss_fn_name = 'L1Loss'
-loss_fn = torch.nn.L1Loss()
+# loss_fn_name = 'L2Loss'
+# loss_fn = torch.nn.L1Loss()
 
 loss_fn_name = 'L2Loss'
 loss_fn = torch.nn.MSELoss()
+# Set model, optimizer, loss function. 
+model = models.cifar_models.NetLargeDropout(name=f'NetLargeDropout-{loss_fn_name}')
+# model = models.cifar_models.NetSmall(name=f'NetSmall-{loss_fn_name}')
+# model = models.cifar_models.NetLarge(name=f'NetLarge-{loss_fn_name}')
+model.to(model.device)
 
-n_epochs = 5
+opt = torch.optim.Adam(model.parameters(), lr=0.001)
+n_epochs = 100
 
 # Train model
 train_loss, val_loss = train(n_epochs, model, opt, loss_fn, train_loader, val_loader)
 # Save train, val loss. 
 title_name = f'{model.name}-{loss_fn_name}-Adam'
-plot_loss(train_loss, val_loss, title=title_name, save_loc='plots/'+title_name)
+plot_loss(train_loss, val_loss, title=title_name, save_loc='plots/cifar10/'+title_name)

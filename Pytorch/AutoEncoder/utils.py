@@ -1,4 +1,5 @@
 import numpy as np
+from sklearn.manifold import TSNE
 import matplotlib.pyplot as plt
 
 def plot_side_by_side(img1, title1, img2, title2):
@@ -24,3 +25,16 @@ def imshow(img, mean=1, std=1):
 def plot_loss(training_epochs, losses):
     plt.plot(training_epochs, losses)
     plt.title('Training loss vs Epoch')
+
+
+def display_tsne(data_points, labels):
+    # Embed list of points into 2D space using t-distributed Stochastic Neighbour embedding.
+    # data_points must numpy array.
+    embedded = TSNE(n_components=2).fit_transform(data_points)
+    
+    # plot data points.
+    fig, ax = plt.subplots()
+    
+    ax.scatter(embedded[:,0], embedded[:, 1], c=labels)
+    
+    plt.show()

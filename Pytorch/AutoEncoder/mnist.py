@@ -139,17 +139,16 @@ val_set = torchvision.datasets.MNIST(data_path, train=False, download=True,  tra
 train_loader = torch.utils.data.DataLoader(train_set, batch_size=batch_size, shuffle=True)
 val_loader = torch.utils.data.DataLoader(val_set, batch_size=batch_size, shuffle=False)
 
-
 # Set model, optimizer, loss function. 
-loss_fn_name = 'L1Loss'
-loss_fn = torch.nn.L1Loss()
-
 # loss_fn_name = 'L2Loss'
-# loss_fn = torch.nn.MSELoss()
+# loss_fn = torch.nn.L1Loss()
 
-# model = models.mnist_models.NetLargeDropout(name=f'NetLargeDropout-{loss_fn_name}')
+loss_fn_name = 'L2Loss'
+loss_fn = torch.nn.MSELoss()
+
+model = models.mnist_models.NetLargeDropout(name=f'NetLargeDropout-{loss_fn_name}')
 # model = models.mnist_models.NetSmall(name=f'NetSmall-{loss_fn_name}')
-model = models.mnist_models.NetLarge(name=f'NetLarge-{loss_fn_name}')
+# model = models.mnist_models.NetLarge(name=f'NetLarge-{loss_fn_name}')
 
 model.to(model.device)
 opt = torch.optim.Adam(model.parameters(), lr=0.001)
