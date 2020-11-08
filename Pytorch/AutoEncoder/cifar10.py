@@ -150,14 +150,19 @@ loss_fn = torch.nn.L1Loss()
 # Set model, optimizer, loss function. 
 # model = models.cifar_models.NetLargeDropout(name=f'NetLargeDropout-{loss_fn_name}')
 # model = models.cifar_models.NetSmall(name=f'NetSmall-{loss_fn_name}')
-model = models.cifar_models.NetLarge(name=f'NetLarge-{loss_fn_name}')
+# model = models.cifar_models.NetLarge(name=f'NetLarge-{loss_fn_name}')
+# model = models.cifar_models.NetGrossDropout(name=f'NetGross-{loss_fn_name}')
+model = models.cifar_models.Net(name=f'Net-{loss_fn_name}')
 model.to(model.device)
 
 opt = torch.optim.Adam(model.parameters(), lr=0.001)
 n_epochs = 300
-
+train_loss = []
+val_loss = []
 # Train model
-train_loss, val_loss = train(n_epochs, model, opt, loss_fn, train_loader, val_loader)
+train_loss_1, val_loss_1 = train(n_epochs, model, opt, loss_fn, train_loader, val_loader)
+train_loss.extend(train_loss_1)
+val_loss.extend(val_loss_1)
 # Save train, val loss. 
 title_name = f'{model.name}-{loss_fn_name}-Adam'
 plot_loss(train_loss, val_loss, title=title_name, save_loc='plots/cifar10/'+title_name)
