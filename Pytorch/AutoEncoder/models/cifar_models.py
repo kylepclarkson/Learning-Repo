@@ -22,17 +22,17 @@ class Net(nn.Module):
         # downsample 32x16x16 --> 16x8x8
         # self.downsample2 = nn.MaxPool2d(2, 2)
         # convolve 32x8x8 --> 16x8x8
-        self.conv3 = nn.Conv2d(32, 12, kernel_size=3, padding=1, stride=1)
-        # flatten 12x8x8 --> 12x8x8
-        # dense 1x768 --> 1x48
-        self.fc1 = nn.Linear(12*8*8, 48)
+        self.conv3 = nn.Conv2d(32, 16, kernel_size=3, padding=1, stride=1)
+        # flatten 16x8x8 --> 1x1024
+        # dense 1x1024 --> 1x300
+        self.fc1 = nn.Linear(16*8*8, 300)
 
         # === Decoder ===
-        # dense 1x48 --> 1x768
-        self.fc2 = nn.Linear(48, 12*8*8)
-        # reshape 1x768 --> 12x8x8
-        # deconvolve 12x8x8 --> 32x8x8
-        self.deconv1 = nn.ConvTranspose2d(12, 32, kernel_size=1, stride=1)
+        # dense 1x300 --> 1x1024
+        self.fc2 = nn.Linear(300, 16*8*8)
+        # reshape 1x1024 --> 16x8x8
+        # deconvolve 16x8x8 --> 32x8x8
+        self.deconv1 = nn.ConvTranspose2d(16, 32, kernel_size=1, stride=1)
         # deconvolve 32x8x8 --> 64x16x16
         self.deconv2 = nn.ConvTranspose2d(32, 64, kernel_size=2, stride=2)
         # deconvolve 64x16x16 --> 3x32x32
@@ -45,18 +45,23 @@ class Net(nn.Module):
     
     def encode(self, x):
         
+        # print(x.shape)
         x = (F.relu(self.conv1(x)))
+        # print(x.shape)
         x = (F.relu(self.conv2(x)))
+        # print(x.shape)
         x = F.relu(self.conv3(x))
+        # print(x.shape)
         # reshape
-        x = x.view(-1, 12*8*8)
+        x = x.view(-1, 16*8*8)
+        # print(x.shape)
         x = self.fc1(x)
         return x
     
     def decode(self, x):
         x = F.relu(self.fc2(x))
         # reshape
-        x = x.view(-1, 12, 8, 8)
+        x = x.view(-1, 16, 8, 8)
         x = F.relu(self.deconv1(x))
         x = F.relu(self.deconv2(x))
         x = self.deconv3(x)

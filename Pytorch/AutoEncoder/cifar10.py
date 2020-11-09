@@ -156,7 +156,7 @@ model = models.cifar_models.Net(name=f'Net-{loss_fn_name}')
 model.to(model.device)
 
 opt = torch.optim.Adam(model.parameters(), lr=0.001)
-n_epochs = 300
+n_epochs = 100
 train_loss = []
 val_loss = []
 # Train model
