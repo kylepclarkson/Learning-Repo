@@ -140,7 +140,7 @@ train_loader = torch.utils.data.DataLoader(train_set, batch_size=batch_size, shu
 val_loader = torch.utils.data.DataLoader(val_set, batch_size=batch_size, shuffle=False)
 
 
-# %% Train model
+# %% Get model
 # Set model, optimizer, loss function. 
 loss_fn_name = 'L1Loss'
 loss_fn = torch.nn.L1Loss()
@@ -155,6 +155,7 @@ loss_fn = torch.nn.L1Loss()
 model = models.cifar_models.Net(name=f'Net-{loss_fn_name}')
 model.to(model.device)
 
+# %% Train model
 opt = torch.optim.Adam(model.parameters(), lr=0.001)
 n_epochs = 100
 train_loss = []

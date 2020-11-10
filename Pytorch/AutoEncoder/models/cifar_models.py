@@ -16,13 +16,11 @@ class Net(nn.Module):
         # convolve 3x32x32 --> 64x32x32        
         self.conv1 = nn.Conv2d(3, 64, kernel_size=3, padding=1, stride=2)
         # downsample 64x32x32 --> 64x16x16
-        # self.downsample1 = nn.MaxPool2d(2, 2)
-        # convolve 64x16x16 --> 32x16x16
-        self.conv2 = nn.Conv2d(64, 32, kernel_size=3, padding=1, stride=2)
-        # downsample 32x16x16 --> 16x8x8
-        # self.downsample2 = nn.MaxPool2d(2, 2)
-        # convolve 32x8x8 --> 16x8x8
-        self.conv3 = nn.Conv2d(32, 16, kernel_size=3, padding=1, stride=1)
+        # convolve 64x16x16 --> 64x16x16
+        self.conv2 = nn.Conv2d(64, 64, kernel_size=3, padding=1, stride=2)
+        # downsample 64x16x16 --> 64x8x8
+        # convolve 64x8x8 --> 16x8x8
+        self.conv3 = nn.Conv2d(64, 16, kernel_size=3, padding=1, stride=1)
         # flatten 16x8x8 --> 1x1024
         # dense 1x1024 --> 1x300
         self.fc1 = nn.Linear(16*8*8, 300)
@@ -31,12 +29,12 @@ class Net(nn.Module):
         # dense 1x300 --> 1x1024
         self.fc2 = nn.Linear(300, 16*8*8)
         # reshape 1x1024 --> 16x8x8
-        # deconvolve 16x8x8 --> 32x8x8
-        self.deconv1 = nn.ConvTranspose2d(16, 32, kernel_size=1, stride=1)
-        # deconvolve 32x8x8 --> 64x16x16
-        self.deconv2 = nn.ConvTranspose2d(32, 64, kernel_size=2, stride=2)
-        # deconvolve 64x16x16 --> 3x32x32
-        self.deconv3 = nn.ConvTranspose2d(64, 3, kernel_size=2, stride=2)
+        # tconvole 16x8x8 --> 64x8x8
+        self.deconv1 = nn.ConvTranspose2d(16, 64, kernel_size=3, stride=1, padding=1)
+        # tconvolve 64x8x8 --> 64x16x16
+        self.deconv2 = nn.ConvTranspose2d(64, 64, kernel_size=4, stride=2, padding=1)
+        # tconvolve 64x16x16 --> 3x32x32
+        self.deconv3 = nn.ConvTranspose2d(64, 3, kernel_size=4, stride=2, padding=1)
         
     def forward(self, x):
         x = self.encode(x)
