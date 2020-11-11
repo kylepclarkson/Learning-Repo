@@ -73,6 +73,14 @@ def train(n_epochs,
 
     return running_train_loss, running_validation_loss
 
+def random_subset(in_set, n):
+    # Sample n unique and random samples from in_set
+    # Return list of 2-tuples (data, label).
+    indices = np.random.choice(np.arange(len(in_set)), size=n, replace=False)
+    imgs = [in_set[i][0] for i in indices]
+    labels = [in_set[i][1] for i in indices]
+    return imgs, labels
+
 def test_model(model, val_set):
     # Sample random image from validation set. 
     # Display original and reconstruction. 
@@ -81,7 +89,15 @@ def test_model(model, val_set):
     y = model_out(model, x)
     imgs(x, y)
 
+def model_code(model, img):
+    # Get code for img.
+    model.eval()
+    img = img.to(model.device)
+    with torch.no_grad():
+        code = model.encode(img.unsqueeze(0))
+        return code
 def model_out(model, img):
+    # Get model output (reconstruction) for img.
     model.eval()
     img = img.to(model.device)
     with torch.no_grad():
@@ -141,9 +157,9 @@ train_loader = torch.utils.data.DataLoader(train_set, batch_size=batch_size, shu
 val_loader = torch.utils.data.DataLoader(val_set, batch_size=batch_size, shuffle=False)
 
 
-# %% Train model
+# %% Get model
 # Set model, optimizer, loss function. 
-loss_fn_name = 'L2Loss'
+loss_fn_name = 'L1Loss'
 loss_fn = torch.nn.L1Loss()
 
 # loss_fn_name = 'L2Loss'
@@ -154,13 +170,26 @@ model = models.mnist_models.NetSmall(name=f'NetSmall-{loss_fn_name}')
 # model = models.mnist_models.NetLarge(name=f'NetLarge-{loss_fn_name}')
 
 model.to(model.device)
+
+# %% Train model
 opt = torch.optim.Adam(model.parameters(), lr=0.001)
-
-n_epochs = 300
-
+n_epochs = 1000
+train_loss = []
+val_loss = []
 # Train model
-train_loss, val_loss = train(n_epochs, model, opt, loss_fn, train_loader, val_loader)
+train_loss_1, val_loss_1 = train(n_epochs, model, opt, loss_fn, train_loader, val_loader)
+train_loss.extend(train_loss_1)
+val_loss.extend(val_loss_1)
 # Save train, val loss. 
 title_name = f'{model.name}-{loss_fn_name}-Adam'
-plot_loss(train_loss, val_loss, title=title_name, save_loc='plots/mnist/'+title_name)
+plot_loss(train_loss, val_loss, title=title_name, save_loc='plots/cifar10/'+title_name)
 
+# %% View embedding
+n_points = 400
+# Get data, labels from dataset.
+imgs, labels = random_subset(val_set, n_points)
+
+# Encode imgs to code using model, stack into 2D array.
+encoded_imgs = np.vstack([model_code(model, img).cpu().numpy() for img in imgs])
+
+utils.display_tsne(encoded_imgs, labels)
