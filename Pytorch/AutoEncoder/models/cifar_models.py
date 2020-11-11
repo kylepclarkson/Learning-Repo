@@ -4,7 +4,138 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from torchsummary import summary
+# ===============
+# === Net 2.0 ===
+# ===============
+class NetTwo(nn.Module):
+    
+    def __init__(self, name='NetTwo', ckp_dir='saved_models/cifar10/'):
+        super(NetTwo, self).__init__()
+        self.set_model_name(name, ckp_dir)
+        
+        # convolve 3x32x32 --> 32x32x32        
+        self.conv1 = nn.Conv2d(3, 32,
+                               kernel_size=2,
+                               stride=1,
+                               dilation=2,
+                               padding=1)
+        # downsample 32x32x32 --> 32x16x16
+        self.conv2 = nn.Conv2d(32, 32,
+                               kernel_size=3,
+                               stride=2, 
+                               dilation=1,
+                               padding=1)
+        # convolve 32x16x16 --> 16x16x16
+        self.conv3 = nn.Conv2d(32, 16,
+                               kernel_size=2,
+                               stride=1,
+                               dilation=2,
+                               padding=1)
+        # downsample 16x16x16 --> 16x8x8
+        self.conv4 = nn.Conv2d(16, 16,
+                               kernel_size=3,
+                               stride=2, 
+                               dilation=1,
+                               padding=1)
+        # convolve 16x8x8 --> 16x8x8
+        self.conv5 = nn.Conv2d(16, 16,
+                               kernel_size=2,
+                               stride=1,
+                               dilation=2,
+                               padding=1)
+        
+        # flatten 16x8x8 --> 1x1024
+        # dense 1x1024 --> 1x300
+        self.fc1 = nn.Linear(16*8*8, 300)
+        # dropout
+        self.dropout1 = nn.Dropout(p=0.3)
 
+        # === Decoder ===
+        # dense 1x300 --> 1x1024
+        self.fc2 = nn.Linear(300, 16*8*8)
+        # dropout 
+        self.dropout2 = nn.Dropout(p=0.3)
+        # reshape 1x1024 --> 16x8x8
+        # convolve 16x8x8 --> 16x8x8
+        self.conv6 = nn.Conv2d(16, 16,
+                               kernel_size=2,
+                               stride=1,
+                               dilation=2,
+                               padding=1)
+        # tconvolve 16x8x8 --> 16x16x16
+        self.conv7t = nn.ConvTranspose2d(16, 16,
+                                         kernel_size=2,
+                                         stride=2,
+                                         dilation=3,
+                                         padding=1)
+        
+        # convolve 16x16x16 --> 32x16x16
+        self.conv8 = nn.Conv2d(16, 32,
+                               kernel_size=2,
+                               stride=1,
+                               dilation=2,
+                               padding=1)
+        
+        # tconvolve 32x16x16 --> 32x32x32
+        self.conv9t = nn.ConvTranspose2d(32, 32,
+                                         kernel_size=2,
+                                         stride=2,
+                                         dilation=3,
+                                         padding=1)
+        # convolve 32x32x32 --> 3x32x32
+        self.conv10 = nn.Conv2d(32, 3,
+                               kernel_size=2,
+                               stride=1,
+                               dilation=2,
+                               padding=1)
+        
+    def forward(self, x):
+        x = self.encode(x)
+        x = self.decode(self.dropout1(F.relu(x)))
+        return x
+    
+    def encode(self, x):
+        
+        # print(x.shape)
+        x = (F.relu(self.conv1(x)))
+        # print(x.shape)
+        x = (F.relu(self.conv2(x)))
+        # print(x.shape)
+        x = F.relu(self.conv3(x))
+        # print(x.shape)
+        x = F.relu(self.conv4(x))
+        # print(x.shape)
+        x = F.relu(self.conv5(x))
+        # print(x.shape)
+        # reshape
+        x = x.view(-1, 16*8*8)
+        # print(x.shape)
+        x = self.fc1(x)
+        return x
+    
+    def decode(self, x):
+        x = self.dropout2(F.relu(self.fc2(x)))
+        # reshape
+        x = x.view(-1, 16, 8, 8)
+        x = F.relu(self.conv6(x))
+        x = F.relu(self.conv7t(x))
+        x = F.relu(self.conv8(x))
+        x = F.relu(self.conv9t(x))
+        x = self.conv10(x)
+        return x
+                
+    def summary(self):
+        self.to(self.device)
+        return summary(self, (3, 32, 32))
+    
+    def save_checkpoint(self):
+        save_checkpoint(self)
+
+    def load_checkpoint(self):
+        load_checkpoint(self)        
+        
+    def set_model_name(self, name, ckp_dir):
+        set_model_name(self, name, ckp_dir)
 
 class Net(nn.Module):
     
@@ -16,10 +147,8 @@ class Net(nn.Module):
         # convolve 3x32x32 --> 64x32x32        
         self.conv1 = nn.Conv2d(3, 64, kernel_size=3, padding=1, stride=2)
         # downsample 64x32x32 --> 64x16x16
-        # convolve 64x16x16 --> 64x16x16
         self.conv2 = nn.Conv2d(64, 64, kernel_size=3, padding=1, stride=2)
         # downsample 64x16x16 --> 64x8x8
-        # convolve 64x8x8 --> 16x8x8
         self.conv3 = nn.Conv2d(64, 16, kernel_size=3, padding=1, stride=1)
         # flatten 16x8x8 --> 1x1024
         # dense 1x1024 --> 1x300

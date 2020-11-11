@@ -152,12 +152,13 @@ loss_fn = torch.nn.L1Loss()
 # model = models.cifar_models.NetSmall(name=f'NetSmall-{loss_fn_name}')
 # model = models.cifar_models.NetLarge(name=f'NetLarge-{loss_fn_name}')
 # model = models.cifar_models.NetGrossDropout(name=f'NetGross-{loss_fn_name}')
-model = models.cifar_models.Net(name=f'Net-{loss_fn_name}')
+# model = models.cifar_models.Net(name=f'Net-{loss_fn_name}')
+model = models.cifar_models.NetTwo(name=f'Net2-{loss_fn_name}')
 model.to(model.device)
 
 # %% Train model
 opt = torch.optim.Adam(model.parameters(), lr=0.001)
-n_epochs = 100
+n_epochs = 1000
 train_loss = []
 val_loss = []
 # Train model
