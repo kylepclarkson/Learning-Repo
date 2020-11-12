@@ -34,7 +34,13 @@ def display_tsne(data_points, labels):
     
     # plot data points.
     fig, ax = plt.subplots()
+    scatter = ax.scatter(embedded[:,0], embedded[:, 1], c=labels)
     
-    ax.scatter(embedded[:,0], embedded[:, 1], c=labels)
+    legend_classes = ax.legend(*scatter.legend_elements(),
+                               title="Digits",
+                               loc="center left",
+                               bbox_to_anchor=(1, 0.5))
+    # plt.add_artist(legend_classes)
+    ax.add_artist(legend_classes)
     
     plt.show()
