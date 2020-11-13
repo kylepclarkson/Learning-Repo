@@ -15,10 +15,12 @@ import torchvision
 import models.mnist_models
 import utils
 
+
 def train(n_epochs,
           model,
           optimizer,
-          loss_function,
+          reconstruction_loss_fn,
+          cluster_loss_fn,
           train_loader,
           val_loader):
     print(f'Training model {model.name}. Device: {model.device}')
@@ -32,7 +34,7 @@ def train(n_epochs,
         training_loss = 0.0
 
         # iterate over training batch
-        for imgs, _ in train_loader:
+        for imgs, labels in train_loader:
             
             # move tensors to device
             imgs = imgs.to(model.device)
@@ -41,7 +43,10 @@ def train(n_epochs,
             optimizer.zero_grad()
             # forward, backward, update
             imgs_out = model(imgs)
-            loss = loss_function(imgs_out, imgs)
+            loss = reconstruction_loss_fn(imgs_out, imgs)
+            if cluster_loss_fn is not None:
+                imgs_embedding = model.encode(imgs)
+                loss += cluster_loss_fn(imgs_embedding, labels)
             
             loss.backward()
             optimizer.step()
@@ -57,7 +62,7 @@ def train(n_epochs,
                 imgs = imgs.to(model.device)
                 imgs_out = model(imgs)
     
-                loss = loss_function(imgs_out, imgs)
+                loss = reconstruction_loss_fn(imgs_out, imgs)
                     
                 validation_loss += loss.item()
         running_validation_loss.append(validation_loss)
@@ -140,7 +145,22 @@ def plot_loss(train_losses, val_losses, title=None, save_loc=None):
     if save_loc is not None:
         plt.savefig(save_loc)
     plt.show()
-    
+
+def cluster_loss_fn(x, y):
+    """
+    Parameters
+    ----------
+    x : PyTorch Tensor of size BxD where B is the batchsize and D the dimension
+        of the encoding.
+    y : PyTorch Tensor of size B where B is the batchsize. 
+
+    Returns
+    -------
+    None.
+
+    """
+    # TODO implement.
+    pass
 
 # Get MNIST datasets
 data_path = 'C:\\Users\\Kyle\\Documents\\GitHub\\data\\'
@@ -160,7 +180,8 @@ val_loader = torch.utils.data.DataLoader(val_set, batch_size=batch_size, shuffle
 # %% Get model
 # Set model, optimizer, loss function. 
 loss_fn_name = 'L1Loss'
-loss_fn = torch.nn.L1Loss()
+reconstruction_loss_fn = torch.nn.L1Loss()
+cluster_loss_fn = None
 
 # loss_fn_name = 'L2Loss'
 # loss_fn = torch.nn.MSELoss()
@@ -177,7 +198,13 @@ n_epochs = 1000
 train_loss = []
 val_loss = []
 # Train model
-train_loss_1, val_loss_1 = train(n_epochs, model, opt, loss_fn, train_loader, val_loader)
+train_loss_1, val_loss_1 = train(n_epochs,
+                                 model,
+                                 opt,
+                                 reconstruction_loss_fn=reconstruction_loss_fn,
+                                 cluster_loss_fn=cluster_loss_fn,
+                                 train_loader=train_loader,
+                                 val_loader=val_loader)
 train_loss.extend(train_loss_1)
 val_loss.extend(val_loss_1)
 # Save train, val loss. 
