@@ -1,7 +1,20 @@
-header {
-    padding: 160px 0 140px;
+body,
+html {
+  width: 100%;
+  height: 100%;
 }
 
-section {
-    padding: 150px 0;
+header {
+    background-color: #0e54eb;
+    color: aliceblue;
 }
+
+hr.divider {
+    max-width: 10.25rem;
+    border-width: 0.4rem;
+    border-color: #e4c642;
+}
+
+/* section {
+    padding: 150px 0;
+} */
