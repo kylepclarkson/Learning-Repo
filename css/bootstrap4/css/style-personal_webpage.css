@@ -1,10 +1,10 @@
-body,
-html {
-  width: 100%;
-  height: 100%;
+body {
+    font: 20px "Montserrat", sans-serif;
+    line-height: 1.8;
+    padding-top: 60px;
 }
 
-header {
+.masthead#home {
     background-color: #0e54eb;
     color: aliceblue;
 }
@@ -15,6 +15,105 @@ hr.divider {
     border-color: #e4c642;
 }
 
-/* section {
-    padding: 150px 0;
-} */
+#footer-divider {
+    max-width: 20rem;
+    border-width: 0.2rem;
+    border-color: aliceblue;
+}
+
+.post {
+    padding-left: 40px;
+}
+
+.copyright {
+    font-size: 16px;
+    padding: 10px;
+    color: #fff;
+    border-top: 1px solid #FFFFFF;
+}
+
+/* Social Icons */
+
+/* footer social icons */
+
+.social-network {
+    text-align: center;
+}
+
+ul.social-network {
+    list-style: none;
+    margin-left: 0 !important;
+    margin: 20px 10px;
+}
+
+ul.social-network li {
+    margin: 0 5px;
+}
+
+.social-network a.icoLinkedin:hover {
+    background-color: #007bb7;
+}
+
+.social-network a.icoGitHub:hover {
+    background-color: #24292e;
+}
+
+.social-network a.icoInstagram:hover {
+    background: #d6249f;
+    background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
+    box-shadow: 0px 3px 10px rgba(0, 0, 0, .25);
+}
+
+.social-network a.icoFacebook:hover i, .social-network a.icoLinkedin:hover i, .social-network a.icoGitHub:hover i, .social-network a.icoInstagram:hover i {
+    color: #fff;
+}
+
+.social-network a.socialIcon:hover, .socialHoverClass {
+    color: #44BCDD;
+}
+
+.social-circle li a {
+    display: inline-block;
+    position: relative;
+    margin: 0 auto 0 auto;
+    -moz-border-radius: 50%;
+    -webkit-border-radius: 50%;
+    border-radius: 50%;
+    text-align: center;
+    width: 30px;
+    height: 30px;
+    font-size: 15px;
+}
+
+.social-circle li i {
+    margin: 0;
+    line-height: 30px;
+    text-align: center;
+}
+
+.social-circle li a:hover i, .triggeredHover {
+    -moz-transform: rotate(360deg);
+    -webkit-transform: rotate(360deg);
+    -ms--transform: rotate(360deg);
+    transform: rotate(360deg);
+    -webkit-transition: all 0.2s;
+    -moz-transition: all 0.2s;
+    -o-transition: all 0.2s;
+    -ms-transition: all 0.2s;
+    transition: all 0.2s;
+}
+
+.social-circle i {
+    color: #595959;
+    -webkit-transition: all 0.8s;
+    -moz-transition: all 0.8s;
+    -o-transition: all 0.8s;
+    -ms-transition: all 0.8s;
+    transition: all 0.8s;
+}
+
+.social-network a {
+    background-color: #F9F9F9;
+}
+
+
