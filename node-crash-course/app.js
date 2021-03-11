@@ -1,4 +1,5 @@
 const express = require('express');
+const morgan = require('morgan')
 
 // instace of express app.
 const app = express();
@@ -7,6 +8,11 @@ app.set('view engine', 'ejs');
 
 // listen for requests.
 app.listen(3000);
+
+// serve static files
+app.use(express.static('public'));
+// morgan - logging tool
+app.use(morgan('dev'));
 
 app.get('/', (req, res) => {
     // auto-infers content type (sets header) and status code.
@@ -42,5 +48,5 @@ app.get('/blogs/create', (req, res) => {
 app.use((req, res) => {
     // res.status(404).sendFile('./views/404.html', { root: __dirname})
 
-    res.render('404')
+    res.render('404', {title: '404'})
 })
