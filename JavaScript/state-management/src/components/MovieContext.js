@@ -23,7 +23,7 @@ export const MovieProvider = (props) => {
     ]);
     // pass data above to components in props.children
     return (
-        <MovieContext.Provider value={'Hello'}>
+        <MovieContext.Provider value={[movies, setMovies]}>
             {props.children}
         </MovieContext.Provider>
     );
