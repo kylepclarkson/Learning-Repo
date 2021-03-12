@@ -1,4 +1,4 @@
-import React, { useState } from "react"; // import react and useState 
+import React, { useState, useEffect } from "react"; // import react and useState. useEffect for running fuction whenever a state changes. 
 import './App.css';
 // import components
 import Form from './components/Form'
@@ -9,7 +9,30 @@ function App() {
   // value and function to set text
   const [inputText, setInputText] = useState("");
   const [todos, setTodos] = useState([]);
+  const [status, setStatus] = useState('all');
+  const [filteredTodos, setFilteredTodos] = useState([]);
   // === end state data ===
+
+  useEffect(()=> {
+    filterHandler();
+  }, [todos, status]) // everytime todos, status changes, run this function. 
+  const filterHandler = () => {
+    switch(status) {
+      case 'completed': 
+        setFilteredTodos(todos.filter(todo => (
+          todo.completed === true
+        )))
+        break;
+      case 'uncompleted': 
+        setFilteredTodos(todos.filter(todo => (
+          todo.completed === false
+        )))
+        break;
+      default:
+        setFilteredTodos(todos);
+        break;
+    }
+  }
 
   return (
     <div className="App">
@@ -20,8 +43,17 @@ function App() {
       {/*
         Pass function to form using props. 
       */}
-      <Form inputText={inputText} setInputText={setInputText} todos={todos} setTodos={setTodos}/>
-      <TodoList todos={todos}/> 
+      <Form 
+        inputText={inputText} 
+        setInputText={setInputText} 
+        todos={todos} 
+        setTodos={setTodos} 
+        setStatus={setStatus}
+        />
+      <TodoList 
+        todos={todos} 
+        setTodos={setTodos} 
+        filteredTodos={filteredTodos}/> 
     </div>
   );
 }

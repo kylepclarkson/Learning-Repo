@@ -1,7 +1,7 @@
 import React from 'react';
 
 /** Create form component */
-const Form = ({inputText, setInputText, todos, setTodos}) => {
+const Form = ({inputText, setInputText, todos, setTodos, setStatus}) => {
 
     const inputTextHandler = (e) => {
         console.log(e.target.value);
@@ -17,6 +17,11 @@ const Form = ({inputText, setInputText, todos, setTodos}) => {
         ]);
         // set input text state to empty string.
         setInputText("");
+    };
+
+    const statusHandler = (e) => {
+        const state = e.target.value
+        setStatus(state);
     }
 
     return (
@@ -26,7 +31,7 @@ const Form = ({inputText, setInputText, todos, setTodos}) => {
                 <i class="fas fa-plus-square"></i>
             </button>    
             <div className="select">
-                <select name="todos" className="filter-todo">
+                <select onChange={statusHandler} name="todos" className="filter-todo">
                     <option value="all">All</option>
                     <option value="completed">Completed</option>
                     <option value="uncompleted">Uncompleted</option>
