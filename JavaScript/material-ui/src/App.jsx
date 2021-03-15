@@ -109,6 +109,9 @@ const App = () => {
             <Typography variant="h6" align="center" gutterbottom>
                     Footer
             </Typography>
+            <Typography variant="h6" align="center" gutterbottom>
+                    Footer
+            </Typography>
         </footer>
     </>
   );
