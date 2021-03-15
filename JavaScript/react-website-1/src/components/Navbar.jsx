@@ -1,6 +1,8 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import {Link} from 'react-router-dom'
 import { Button } from './Button';
+
+import './Navbar.css';
 
 function Navbar() {
 
@@ -22,7 +24,12 @@ function Navbar() {
         }
     };
 
-    window.addEventListener('resize', showButton)
+    // hook to showButton when ever screen changes. 
+    useEffect(() => {
+        showButton()
+    },[])
+
+    window.addEventListener('resize', showButton);
 
     return (
         <>
@@ -30,7 +37,8 @@ function Navbar() {
                 <div className="navbar-container">
                     <Link
                         to="/"
-                        className="navbar-logo">
+                        className="navbar-logo"
+                        onClick={closeMobileMenu}>
                             ExPLORE <i className="fab fa-typo3"/>
                     </Link>
                     <div className="menu-icon" onClick={handleClick}>
