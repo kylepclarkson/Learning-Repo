@@ -10,6 +10,11 @@ import EventBind from './components/EventBind'
 import ParentComponent from './components/ParentComponent'
 import UserGreeting from './components/UserGreeting'
 import NameList from './components/NameList'
+import Stylesheet from './components/Stylesheet'
+import Inline from './components/Inline'
+import Form from './components/Form'
+import FragmentDemo from './components/FragmentDemo'
+import Table from './components/Table'
 
 function App() {
   return (
@@ -21,7 +26,12 @@ function App() {
       {/* <EventBind /> */}
       {/* <ParentComponent /> */}
       {/* <UserGreeting /> */}
-      <NameList />
+      {/* <NameList /> */}
+      {/* <Stylesheet primary={true}/> */}
+      {/* <Inline /> */}
+      {/* <Form /> */}
+      {/* <FragmentDemo /> */}
+      {/* <Table /> */}
     </div>
   );
 }
