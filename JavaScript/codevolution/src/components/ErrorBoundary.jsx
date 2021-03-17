@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 
+// Errorboundaries only occur in production. 
 class ErrorBoundary extends Component {
 
     constructor(props) {

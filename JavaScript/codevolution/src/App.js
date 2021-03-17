@@ -20,6 +20,13 @@ import FocusInput from './components/FocusInput'
 import PortalDemo from './components/PortalDemo'
 import Hero from './components/Hero'
 import ErrorBoundary from './components/ErrorBoundary'
+import ComponentC from './components/ComponentC'
+import { UserProvider } from './components/UserContext';
+
+import HookCounter from './hooks/HookCounter'
+import HookCounterTwo from './hooks/HookCounterTwo'
+import HookCounterThree from './hooks/HookCounterThree'
+import HookCounterFour from './hooks/HookCounterFour'
 
 
 function App() {
@@ -41,10 +48,17 @@ function App() {
       {/* <RefDemo /> */}
       {/* <FocusInput /> */}
       {/* <PortalDemo /> */}
-      <ErrorBoundary> 
+      {/* <ErrorBoundary> 
       <Hero heroName={'Justin'} />
       <Hero heroName={'Joker'} />
-      </ErrorBoundary> 
+      </ErrorBoundary>  */}
+      {/* <UserProvider value="Kyle">
+        <ComponentC />
+      </UserProvider> */}
+      {/* <HookCounter /> */}
+      {/* <HookCounterTwo /> */}
+      {/* <HookCounterThree /> */}
+      <HookCounterFour />
     </div>
   );
 }
