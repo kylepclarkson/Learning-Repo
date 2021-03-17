@@ -27,6 +27,8 @@ import HookCounter from './hooks/HookCounter'
 import HookCounterTwo from './hooks/HookCounterTwo'
 import HookCounterThree from './hooks/HookCounterThree'
 import HookCounterFour from './hooks/HookCounterFour'
+import HookCounterOne from './hooks/HookCounterOne'
+import IntervalHookCounter from './hooks/IntervalHookCounter'
 
 
 function App() {
@@ -58,7 +60,9 @@ function App() {
       {/* <HookCounter /> */}
       {/* <HookCounterTwo /> */}
       {/* <HookCounterThree /> */}
-      <HookCounterFour />
+      {/* <HookCounterFour /> */}
+      {/* <HookCounterOne /> */}
+      <IntervalHookCounter />
     </div>
   );
 }
