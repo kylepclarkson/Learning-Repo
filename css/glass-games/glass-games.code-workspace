@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{
+			"name": "glass-games",
+			"path": "."
+		}
+	],
+	"settings": {
+		"liveServer.settings.multiRootWorkspaceName": "glass-games"
+	}
+}
