@@ -15,6 +15,12 @@ import Inline from './components/Inline'
 import Form from './components/Form'
 import FragmentDemo from './components/FragmentDemo'
 import Table from './components/Table'
+import RefDemo from './components/RefsDemo'
+import FocusInput from './components/FocusInput'
+import PortalDemo from './components/PortalDemo'
+import Hero from './components/Hero'
+import ErrorBoundary from './components/ErrorBoundary'
+
 
 function App() {
   return (
@@ -32,6 +38,13 @@ function App() {
       {/* <Form /> */}
       {/* <FragmentDemo /> */}
       {/* <Table /> */}
+      {/* <RefDemo /> */}
+      {/* <FocusInput /> */}
+      {/* <PortalDemo /> */}
+      <ErrorBoundary> 
+      <Hero heroName={'Justin'} />
+      <Hero heroName={'Joker'} />
+      </ErrorBoundary> 
     </div>
   );
 }
