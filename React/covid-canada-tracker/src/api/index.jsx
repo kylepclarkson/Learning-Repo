@@ -4,6 +4,10 @@ import axios from 'axios'
 
 const url = 'https://api.opencovid.ca/'
 
+/**
+ * Get summary (test) data.
+ * 
+ */
 export const fetchData = async () => {
 
     try {
@@ -14,3 +18,13 @@ export const fetchData = async () => {
         console.log(error);
     }
 }
+
+// Get data for today
+export const fetchDailyData = async() => {
+    try {
+        const response = await axios.get(`${url}/`)
+    } catch (error) {
+        console.log(error)
+    }
+}
+
