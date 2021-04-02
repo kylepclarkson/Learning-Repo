@@ -21,6 +21,8 @@ class App extends React.Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.createCookie = this.createCookie.bind(this);
+    this.startEdit = this.startEdit.bind(this);
+    this.deleteItem = this.deleteItem.bind(this);
   }
 
   componentDidMount() {
@@ -78,6 +80,14 @@ class App extends React.Component {
 
     // submit the active item to api
     var url = 'http://127.0.0.1:8000/api/task-create/'
+
+    if (this.state.editing) {
+      url = `http://127.0.0.1:8000/api/task-update/${this.state.id}/`
+      this.setState({
+        editing: false,
+      })
+    }
+
     fetch(url, {
       method: 'POST',
       headers: {
@@ -94,11 +104,36 @@ class App extends React.Component {
         },
       })
     }).catch((err) => console.log("Error submiting data: ", err))
-
   }
+
+  startEdit(task) {
+    this.setState({
+      activeItem: task,
+      editing: true,
+    })
+  }
+
+  deleteItem(task) {
+    // generate cookie token 
+    var csrfToken = this.createCookie('csrftoken');
+
+    fetch(`http://127.0.0.1:8000/api/task-delete/${task.id}/`, {
+      method: 'DELETE',
+      headers: {
+        'Content-type': 'application/json',
+        'X-CSRFToken': csrfToken
+      },
+    }).then((res) => {
+      this.fetchTasks();
+    })
+  }
+
+
 
   render() {
     var tasks = this.state.todoList
+    var self = this
+
     return (
       <div className="container">
         <div id="task-container">
@@ -129,11 +164,11 @@ class App extends React.Component {
                   </div>
                   
                   <div style={{flex: 1}}>
-                    <button className="btn btn-sm btn-outline-info">Edit</button>
+                    <button onClick={() => self.startEdit(task)} className="btn btn-sm btn-outline-info">Edit</button>
                   </div>
                   
                   <div style={{flex: 1}}>
-                    <button className="btn btn-sm btn-outline-dark">Remove</button>
+                    <button onClick={() => self.deleteItem(task)} className="btn btn-sm btn-outline-dark">Remove</button>
                   </div>
                 </div>
               )
