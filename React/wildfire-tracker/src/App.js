@@ -4,7 +4,7 @@ import Map from './components/Map'
 
 function App() {
 
-  const [eventData, setEventData ] = useState([]);
+  const [eventData, setEventData] = useState([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -16,6 +16,7 @@ function App() {
         return res;
       })
       setEventData(events); 
+      // data has been loaded.
       setLoading(false);
     }
 

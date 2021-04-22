@@ -1,4 +1,4 @@
-import Icon from '@iconify/react'
+import { Icon } from '@iconify/react'
 import locationIcon from '@iconify/icons-mdi/fire-alert'
 
 const LocationMarker = ( {lat, lng, onClick} ) => {
@@ -10,4 +10,3 @@ const LocationMarker = ( {lat, lng, onClick} ) => {
 }
 
 export default LocationMarker
-
