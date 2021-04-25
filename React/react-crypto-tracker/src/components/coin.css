@@ -9,7 +9,7 @@
     justify-items: start;
     align-items: center;
     height: 80px;
-    border-bottom: 1px solid white;
+    border-bottom: 1px solid grey;
     width: 900px;
 }
 
@@ -40,4 +40,29 @@
     text-align: center;
     justify-content: space-between;
     width: 100%;
+}
+
+.coin-price {
+    width: 150px;
+    margin-right: 40px;
+}
+
+.coin-volume {
+    width: 220px;
+}
+
+.coin-marketcap {
+    width: 155px
+}
+
+.coin-percent {
+    width: 100%;
+}
+
+.red {
+    color: red;
+}
+
+.green {
+    color: rgb(97, 207, 97);
 }
