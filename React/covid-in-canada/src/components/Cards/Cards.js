@@ -1,24 +1,16 @@
 import React from 'react'
 import { Card, CardContent, Grid, Typography } from '@material-ui/core';
-import { withStyles } from '@material-ui/core/styles'
 import CountUp from 'react-countup'
 import cx from 'classnames'
 
 import styles from './Cards.module.css'
-import { red } from '@material-ui/core/colors';
 
-const FontColors = withStyles({
-  red: {
-    color: "#FF0000"
-  },
-  green: {
-    color: "#00FF00"
-  }
-})(Typography)
-
-function Cards({ summaryData }) {
+function Cards({ summaryData, population }) {
+  console.log('pop', population)
   return (
     <div>
+
+
       <div className={styles.container}>
         <Typography color="textPrimary" variant="h3" align='center' gutterBottom>
           Summary Data
@@ -30,7 +22,7 @@ function Cards({ summaryData }) {
               <Typography color="textSecondary" variant="h5" gutterBottom>
                 Cases
             </Typography>
-              <Typography variant='h5'>
+              <Typography variant='h5' gutterBottom>
                 <CountUp
                   start={0}
                   end={summaryData.cumulative_cases}
@@ -49,7 +41,7 @@ function Cards({ summaryData }) {
               <Typography color="textSecondary" variant="h5" gutterBottom>
                 Recovered
             </Typography>
-              <Typography variant='h5'>
+              <Typography variant='h5' gutterBottom>
                 <CountUp
                   start={0}
                   end={summaryData.cumulative_recovered}
@@ -68,7 +60,7 @@ function Cards({ summaryData }) {
               <Typography color="textSecondary" variant="h5" gutterBottom>
                 Deaths
             </Typography>
-              <Typography variant='h5'>
+              <Typography variant='h5' gutterBottom>
                 <CountUp
                   start={0}
                   end={summaryData.cumulative_deaths}
@@ -94,7 +86,7 @@ function Cards({ summaryData }) {
               <Typography color="textSecondary" variant="h5" gutterBottom>
                 Active
             </Typography>
-              <Typography variant='h5'>
+              <Typography variant='h5' gutterBottom>
                 <CountUp
                   start={0}
                   end={summaryData.active_cases}
@@ -102,18 +94,30 @@ function Cards({ summaryData }) {
                   separator=','
                 />
               </Typography>
+              <Typography color="textSecondary" variant="body1" gutterBottom>
+                Per Capita*
+              </Typography>
+              <Typography variant='body1' gutterBottom>
+                <CountUp
+                  start={0}
+                  end={(summaryData.active_cases / population) * 100}
+                  duration={1}
+                  decimals={3}
+                  separator=','
+                />%             
+              </Typography>
               <Typography variant='body2'>
-                Number currently active cases of COVID-19.
-            </Typography>
+                Number currently active cases of COVID-19 and per capita percentage.
+              </Typography>
             </CardContent>
           </Grid>
           {/* Total Recovered */}
-          <Grid item component={Card} xs={12} sm={3} className={cx(styles.card, styles.new)}>
+          <Grid item component={Card} xs={12} sm={3} className={cx(styles.card, styles.new_cases)}>
             <CardContent>
               <Typography color="textSecondary" variant="h5" gutterBottom>
                 New Cases
             </Typography>
-              <Typography variant='h5'>
+              <Typography variant='h5' gutterBottom> 
                 <CountUp
                   start={0}
                   end={summaryData.cases}
@@ -123,8 +127,10 @@ function Cards({ summaryData }) {
               </Typography>
               <Typography color="textSecondary" variant="body1" gutterBottom>
                 Change
-            </Typography>
-              <Typography variant='body1' className={ summaryData.active_cases_change < 0 ? styles.red : styles.green}>
+              </Typography>
+              <Typography variant='body1' 
+                className={summaryData.active_cases_change < 0 ? styles.red : styles.green}
+                gutterBottom>
                 <CountUp
                   start={0}
                   end={summaryData.active_cases_change}
@@ -138,12 +144,12 @@ function Cards({ summaryData }) {
             </CardContent>
           </Grid>
           {/* Total Deaths */}
-          <Grid item component={Card} xs={12} sm={3} className={cx(styles.card, styles.deaths)}>
+          <Grid item component={Card} xs={12} sm={3} className={cx(styles.card, styles.new_deaths)}>
             <CardContent>
               <Typography color="textSecondary" variant="h5" gutterBottom>
                 New Deaths
             </Typography>
-              <Typography variant='h5'>
+              <Typography variant='h5' gutterBottom>
                 <CountUp
                   start={0}
                   end={summaryData.deaths}
@@ -158,18 +164,20 @@ function Cards({ summaryData }) {
           </Grid>
         </Grid>
       </div>
+
+
       <div className={styles.container}>
         <Typography color="textPrimary" variant="h3" align='center' gutterBottom>
           Vaccine Distribution
         </Typography>
         <Grid container justify='center'>
-          {/* Total Cases */}
-          <Grid item component={Card} xs={12} sm={3} className={cx(styles.card, styles.cases)}>
+          {/* Deliverd */}
+          <Grid item component={Card} xs={12} sm={3} className={cx(styles.card, styles.delivered)}>
             <CardContent>
               <Typography color="textSecondary" variant="h5" gutterBottom>
                 Delivered
               </Typography>
-              <Typography variant='h5'>
+              <Typography variant='h5' gutterBottom>
                 <CountUp
                   start={0}
                   end={summaryData.cumulative_dvaccine}
@@ -182,33 +190,45 @@ function Cards({ summaryData }) {
             </Typography>
             </CardContent>
           </Grid>
-          {/* Total Recovered */}
-          <Grid item component={Card} xs={12} sm={3} className={cx(styles.card, styles.recovered)}>
+          {/* Oneshot */}
+          <Grid item component={Card} xs={12} sm={3} className={cx(styles.card, styles.partially_administered)}>
             <CardContent>
               <Typography color="textSecondary" variant="h5" gutterBottom>
-                Partially Vaccinated
-            </Typography>
-              <Typography variant='h5'>
+                Partially Administered
+              </Typography>
+              <Typography variant='h5' gutterBottom>
                 <CountUp
                   start={0}
-                  end={summaryData.cumulative_avaccine}
+                  end={summaryData.cumulative_dvaccine}
                   duration={2}
                   separator=','
                 />
+              </Typography>
+              <Typography color="textSecondary" variant="body1" gutterBottom>
+                Per Capita*
+              </Typography>
+              <Typography variant='body1' gutterBottom>
+                <CountUp
+                  start={0}
+                  end={(summaryData.cumulative_dvaccine / population * 100)}
+                  duration={2}
+                  decimals={3}
+                  separator=','
+                />%
               </Typography>
               <Typography variant='body2'>
                 The number of individuals given at least one vaccine shot.
             </Typography>
             </CardContent>
           </Grid>
-          {/* Total Deaths */}
-          <Grid item component={Card} xs={12} sm={3} className={cx(styles.card, styles.deaths)}>
+          {/* Fully vaccinated */}
+          <Grid item component={Card} xs={12} sm={3} className={cx(styles.card, styles.fully_administered)}>
             <CardContent>
               <Typography color="textSecondary" variant="h5" gutterBottom>
-                Fully Vaccinated
+                Fully Administered
             </Typography>
-              <Typography variant='h5'>
-                <CountUp
+              <Typography variant='h5' gutterBottom>
+                <CountUp 
                   start={0}
                   end={summaryData.cumulative_cvaccine}
                   duration={2}
@@ -216,7 +236,7 @@ function Cards({ summaryData }) {
                 />
               </Typography>
               <Typography variant='body2'>
-                The number of individuals fully vaccinated.
+                The number of individuals fully vaccinated and per captia percentage.
             </Typography>
             </CardContent>
           </Grid>
