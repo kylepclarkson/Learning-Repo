@@ -6,8 +6,6 @@ import { summary } from './api'
 
 function App() {
 
-  const API_BASE = 'https://api.opencovid.ca/'
-
   // data retrieved from API
   const [covidData, setCovidData] = useState([])
   // true when data is being retrieved.
@@ -24,21 +22,34 @@ function App() {
     // get covid data.
     const fetchData = async () => {
       setLoading(true)
-      setCovidData(summary(region))
+      const res = await summary(region)
+      const { summary } = await res.json().then(res => {
+        return res
+      })
+      console.log("summary", summary)
+      setCovidData(summary)
+      setLoading(false)
     }
 
     fetchData()
     console.log('Region: ', region)
-    console.log('Data: ', covidData)
+    console.log('Summary data: ', covidData)
   }, [])
 
-  return (
-    <div className="App">
-      <h1>{region}</h1>
-      <CountryPicker onRegionSelect={region => setRegion(region)} />
-      <Cards />
-    </div>
-  );
+  if (loading) {
+    return <h1>Loading</h1>
+  } else {
+    console.log("Finally: ", covidData)
+    return (
+      <div className="App">
+        <h1>{region}</h1>
+        <CountryPicker onRegionSelect={region => setRegion(region)} />
+        <Cards
+          data={covidData}
+        />
+      </div>
+    );
+  }
 }
 
 export default App;

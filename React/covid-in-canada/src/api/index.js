@@ -1,9 +1,11 @@
-
+import axios from 'axios'
 
 const url = 'https://api.opencovid.ca/'
 
-export const summary = async (region) => {
+export const summary = (region) => {
 
-    const res = await fetch(`${url}?loc=${region}`)
-    return await res.json()
+  axios.get(`${url}summary?loc=${region}`).then(res => {
+    console.log('api response:', res)
+    return res
+  })
 }

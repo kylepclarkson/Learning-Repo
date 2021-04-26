@@ -3,17 +3,21 @@
 }
 
 .card {
-  margin: 0 2% !important;
+  margin: 10px 1rem !important;
 }
 
 .cases {
-  border-bottom: 10px solid rgba(0,0,255, 0.85);
+  border-bottom: 20px solid rgba(0,0,255, 0.85);
+}
+
+.active {
+  border-bottom: 20px solid rgba(255, 115, 0, 0.85);
 }
 
 .recovered {
-  border-bottom: 10px solid rgba(0,255,0, 0.85);
+  border-bottom: 20px solid rgba(0,255,0, 0.85);
 }
 
 .deaths {
-  border-bottom: 10px solid rgba(255,0,0, 0.85);
+  border-bottom: 20px solid rgba(255,0,0, 0.85);
 }
