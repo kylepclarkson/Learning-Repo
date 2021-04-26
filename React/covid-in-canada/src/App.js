@@ -1,11 +1,8 @@
-import {useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 
 import CountryPicker from './components/RegionPicker/RegionPicker'
-import {summary} from './api'
-
-import './App.css';
-
-
+import Cards from './components/Cards/Cards'
+import { summary } from './api'
 
 function App() {
 
@@ -25,11 +22,11 @@ function App() {
   useEffect(() => {
     console.log('use effect called')
     // get covid data.
-    const fetchData = async() => {
-        setLoading(true)
-        setCovidData(summary(region))
+    const fetchData = async () => {
+      setLoading(true)
+      setCovidData(summary(region))
     }
-    
+
     fetchData()
     console.log('Region: ', region)
     console.log('Data: ', covidData)
@@ -38,7 +35,8 @@ function App() {
   return (
     <div className="App">
       <h1>{region}</h1>
-      <CountryPicker onRegionSelect={region => setRegion(region)}/>
+      <CountryPicker onRegionSelect={region => setRegion(region)} />
+      <Cards />
     </div>
   );
 }
