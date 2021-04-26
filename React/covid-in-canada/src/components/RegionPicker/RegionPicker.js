@@ -22,7 +22,8 @@ export default function RegionPicker(props) {
   const classes = useStyles();
 
   const handleChange = (event) => {
-    props.onRegionSelect(event.target.value);
+    console.log("Region change", event.target.value)
+    props.handleSetRegion(event.target.value);
   };
 
   return (
@@ -32,7 +33,7 @@ export default function RegionPicker(props) {
       <Select
         labelId="demo-simple-select-label"
         id="demo-simple-select"
-        defaultValue={"canada"}
+        defaultValue={props.currentRegion}
         onChange={handleChange}
       >
         <MenuItem value="canada">Canada</MenuItem>

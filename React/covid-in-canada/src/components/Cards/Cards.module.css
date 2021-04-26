@@ -1,5 +1,5 @@
 .container {
-  margin: 50px 0;
+  margin: 50px 20px;
 }
 
 .card {
@@ -14,10 +14,22 @@
   border-bottom: 20px solid rgba(255, 115, 0, 0.85);
 }
 
+.new {
+  border-bottom: 20px solid rgba(251, 255, 0, 0.85);
+}
+
 .recovered {
   border-bottom: 20px solid rgba(0,255,0, 0.85);
 }
 
 .deaths {
   border-bottom: 20px solid rgba(255,0,0, 0.85);
+}
+
+.red {
+  color: red;
+}
+
+.green {
+  color: green;
 }

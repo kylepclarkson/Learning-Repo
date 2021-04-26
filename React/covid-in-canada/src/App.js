@@ -7,7 +7,7 @@ import { summary } from './api'
 function App() {
 
   // data retrieved from API
-  const [covidData, setCovidData] = useState([])
+  const [summaryData, setSummaryData] = useState([])
   // true when data is being retrieved.
   const [loading, setLoading] = useState(false)
   // region of country
@@ -17,35 +17,44 @@ function App() {
       Would take functionality found in componentDidMount, componentDidUpdate, and componentWillUnmount.
   */
 
+  const handleSetRegion = r => {
+    console.log("Setting region", r)
+    setRegion(r)
+    console.log(region)
+  } 
+
   useEffect(() => {
     console.log('use effect called')
-    // get covid data.
+    const url = 'https://api.opencovid.ca/'
+    
+    // Call API for data.
     const fetchData = async () => {
       setLoading(true)
-      const res = await summary(region)
+      // Get summary data for region.
+      const res = await fetch(`${url}summary?loc=${region}`)
       const { summary } = await res.json().then(res => {
         return res
       })
-      console.log("summary", summary)
-      setCovidData(summary)
+      console.log("summary", summary[0])
+      setSummaryData(summary[0])
       setLoading(false)
     }
 
     fetchData()
     console.log('Region: ', region)
-    console.log('Summary data: ', covidData)
-  }, [])
+  }, [region])
 
   if (loading) {
     return <h1>Loading</h1>
   } else {
-    console.log("Finally: ", covidData)
     return (
       <div className="App">
-        <h1>{region}</h1>
-        <CountryPicker onRegionSelect={region => setRegion(region)} />
+        <CountryPicker 
+          currentRegion = {region}
+          handleSetRegion={handleSetRegion}
+        />
         <Cards
-          data={covidData}
+          summaryData={summaryData}
         />
       </div>
     );
