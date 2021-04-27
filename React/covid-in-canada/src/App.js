@@ -8,8 +8,10 @@ function App() {
 
   // summary data
   const [summaryData, setSummaryData] = useState([])
-  // timeseries data
-  const [timeSeriesData, setTimeSeriesData] = useState([])
+  // timeseries new cases data
+  const [timeSeriesNewCases, setTimeSeriesNewCases] = useState([])
+  // timeseries active cases data
+  const [timeSeriesActiveCases, setTimeSeriesActiveCases] = useState([])
   // true when data is being retrieved.
   const [loading, setLoading] = useState(false)
   // region of country
@@ -48,19 +50,11 @@ function App() {
 
   useEffect(() => {
     const url = 'https://api.opencovid.ca/'
-    const date = new Date();
     // Get 28th day before current
-    // const start = new Date(today.getTime() - (28*24*60*60*1000))
-    date.setDate(date.getDate() - 28)
-    console.log('start', date)
+    const start = new Date(new Date() - (27*24*60*60*1000))
     // form: DD-MM-YYYY
-    var after;
-    // account for leap year.
-    if (date.getDate() == 29 && date.getMonth() == 2) {
-      after = `28-${date.getMonth()-1}-${date.getFullYear()}`
-    }  else {
-      after = `${date.getDate()}-${date.getMonth()-1}-${date.getFullYear()}`
-    }
+    const after = `${start.getDate()}-${start.getMonth()+1}-${start.getFullYear()}`
+    
     // Call API for data.
     const fetchData = async () => {
       setLoading(true)
@@ -72,14 +66,22 @@ function App() {
       console.log("summary", summary[0])
       setSummaryData(summary[0])
 
-      console.log('after', after)
+      // get time series with daily new cases
       res = await fetch(`${url}timeseries?stat=cases&loc=${region}&after=${after}`)
       const { cases } = await res.json().then(res => {
         return res
       })
-      setTimeSeriesData(cases)
-      console.log('timeseries: ', cases)
-      console.log(cases.length)
+      setTimeSeriesNewCases(cases)
+      console.log('new cases: ', cases)
+      
+      // get time series with active cases
+      res = await fetch(`${url}timeseries?stat=active&loc=${region}&after=${after}`)
+      const { active } = await res.json().then(res => {
+        return res
+      })
+      setTimeSeriesActiveCases(active)
+      console.log('active cases: ', active)
+
       setLoading(false)
     }
 
