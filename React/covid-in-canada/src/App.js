@@ -6,13 +6,18 @@ import { summary } from './api'
 
 function App() {
 
-  // data retrieved from API
+  // summary data
   const [summaryData, setSummaryData] = useState([])
+  // timeseries data
+  const [timeSeriesData, setTimeSeriesData] = useState([])
   // true when data is being retrieved.
   const [loading, setLoading] = useState(false)
   // region of country
   const [region, setRegion] = useState('canada')
+  // last 21 days of seven day case averages. 
 
+  // population estimates for 2021Q1 from gov.
+  // https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=1710000901
   const populations = {
     'canada': 38048738,
     'AB': 4436258,
@@ -42,28 +47,43 @@ function App() {
   } 
 
   useEffect(() => {
-    console.log('use effect called')
     const url = 'https://api.opencovid.ca/'
-    
+    const date = new Date();
+    // Get 28th day before current
+    // const start = new Date(today.getTime() - (28*24*60*60*1000))
+    date.setDate(date.getDate() - 28)
+    console.log('start', date)
+    // form: DD-MM-YYYY
+    var after;
+    // account for leap year.
+    if (date.getDate() == 29 && date.getMonth() == 2) {
+      after = `28-${date.getMonth()-1}-${date.getFullYear()}`
+    }  else {
+      after = `${date.getDate()}-${date.getMonth()-1}-${date.getFullYear()}`
+    }
     // Call API for data.
     const fetchData = async () => {
       setLoading(true)
       // Get summary data for region.
-      const res = await fetch(`${url}summary?loc=${region}`)
+      var res = await fetch(`${url}summary?loc=${region}`)
       const { summary } = await res.json().then(res => {
         return res
       })
       console.log("summary", summary[0])
       setSummaryData(summary[0])
+
+      console.log('after', after)
+      res = await fetch(`${url}timeseries?stat=cases&loc=${region}&after=${after}`)
+      const { cases } = await res.json().then(res => {
+        return res
+      })
+      setTimeSeriesData(cases)
+      console.log('timeseries: ', cases)
+      console.log(cases.length)
       setLoading(false)
     }
 
     fetchData()
-    console.log('Region: ', region)
-
-    const today = new Date();
-    const start = new Date(today.getTime() - (28*24*60*60*1000))
-    console.log(start.getDate(), start.getMonth()+1, start.getFullYear())
 
   }, [region])
 

@@ -7,10 +7,17 @@ import styles from './Cards.module.css'
 
 function Cards({ summaryData, population }) {
   console.log('pop', population)
+  const parts = String(summaryData.date).split('-')
+  const date = new Date(
+    parseInt(parts[2],10),
+    parseInt(parts[1],10)-1,
+    parseInt(parts[0],10)
+  )
   return (
     <div>
-
-
+      <Typography align='center' color='textSecondary' variant='h5'>
+        Last updated: {date.toLocaleDateString()}
+      </Typography>
       <div className={styles.container}>
         <Typography color="textPrimary" variant="h3" align='center' gutterBottom>
           Summary Data
@@ -76,7 +83,7 @@ function Cards({ summaryData, population }) {
         </Grid>
       </div>
       <div className={styles.container}>
-        <Typography color="textPrimary" variant="h3" align='center' gutterTop gutterBottom>
+        <Typography color="textPrimary" variant="h3" align='center' gutterBottom>
           Within the last 24 hours
         </Typography>
         <Grid container justify='center'>
@@ -185,8 +192,20 @@ function Cards({ summaryData, population }) {
                   separator=','
                 />
               </Typography>
+              <Typography color="textSecondary" variant="body1" gutterBottom>
+                Percent administered
+              </Typography>
+              <Typography variant='body1' gutterBottom>
+                <CountUp
+                  start={0}
+                  end={(summaryData.cumulative_avaccine) / summaryData.cumulative_dvaccine * 100}
+                  duration={2}
+                  decimals={3}
+                  separator=','
+                />%
+              </Typography>
               <Typography variant='body2'>
-                The number of vaccines delivered.
+                The number of vaccines delivered and percentage administered.
             </Typography>
             </CardContent>
           </Grid>
@@ -199,7 +218,7 @@ function Cards({ summaryData, population }) {
               <Typography variant='h5' gutterBottom>
                 <CountUp
                   start={0}
-                  end={summaryData.cumulative_dvaccine}
+                  end={summaryData.cumulative_avaccine}
                   duration={2}
                   separator=','
                 />
@@ -210,7 +229,7 @@ function Cards({ summaryData, population }) {
               <Typography variant='body1' gutterBottom>
                 <CountUp
                   start={0}
-                  end={(summaryData.cumulative_dvaccine / population * 100)}
+                  end={(summaryData.cumulative_avaccine / population * 100)}
                   duration={2}
                   decimals={3}
                   separator=','
