@@ -6,7 +6,6 @@ import cx from 'classnames'
 import styles from './Cards.module.css'
 
 function Cards({ summaryData, population }) {
-  console.log('pop', population)
   const parts = String(summaryData.date).split('-')
   const date = new Date(
     parseInt(parts[2],10),

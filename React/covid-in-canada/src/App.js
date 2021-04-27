@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Container, Typography, Icon, Grid, BottomNavigation } from '@material-ui/core';
+import { Container, Typography, Grid } from '@material-ui/core';
 import { Line } from 'react-chartjs-2'
 
 import CountryPicker from './components/RegionPicker/RegionPicker'
@@ -16,7 +16,7 @@ Date.prototype.addDays = function (days) {
   return date;
 }
 // generate date labels for graphs
-const dateArray = new Array()
+const dateArray = []
 var currentDate = new Date(new Date() - ((day_window - 8) * 24 * 60 * 60 * 1000))
 while (currentDate <= new Date()) {
   dateArray.push(new Date(currentDate).toLocaleDateString());
@@ -105,9 +105,7 @@ function App() {
   */
 
   const handleSetRegion = r => {
-    console.log("Setting region", r)
     setRegion(r)
-    console.log(region)
   }
 
   useEffect(() => {
@@ -116,7 +114,7 @@ function App() {
     const start = new Date(new Date() - ((day_window - 1) * 24 * 60 * 60 * 1000))
     // form: DD-MM-YYYY
     const after = `${start.getDate()}-${start.getMonth() + 1}-${start.getFullYear()}`
-    console.log('day start 7-day average at:', after)
+    // console.log('day start 7-day average at:', after)
     // Call API for data.
     const fetchData = async () => {
       setLoading(true)
@@ -125,7 +123,7 @@ function App() {
       const { summary } = await res.json().then(res => {
         return res
       })
-      console.log("summary", summary[0])
+      // console.log("summary", summary[0])
       setSummaryData(summary[0])
 
       // get time series with daily new cases
@@ -133,18 +131,19 @@ function App() {
       const { cases } = await res.json().then(res => {
         return res
       })
+      // console.log('cases:', cases)
       var sum = 0.0
       var i = 0
       var j = 0
       var temp = []
-      for (i = 0; i < cases.length - 7; i++) {
+      for (i = 0; i <= cases.length - 7; i++) {
         sum = 0.0
         for (j = i; j < i + 7; j++) {
-          sum += cases[j].cases
+          sum += (cases[j].cases > 0) ? cases[j].cases : 0
         }
         temp[i] = sum / 7.0
       }
-      console.log('daily cases:', temp)
+      // console.log('daily cases:', temp)
       setTimeSeriesNewCases(temp)
 
       // get time series with active cases
@@ -153,18 +152,20 @@ function App() {
         return res
       })
 
+      // console.log('active:', active)
+
       temp = []
-      for (i = 0; i < active.length - 7; i++) {
+      for (i = 0; i <= active.length - 7; i++) {
         sum = 0.0
         for (j = i; j < i + 7; j++) {
-          sum += active[j].active_cases
+          sum += (active[j].active_cases > 0) ? active[j].active_cases : 0
         }
         temp[i] = sum / 7.0
       }
-      console.log('active cases:', temp)
+      // console.log('active cases:', temp)
       setTimeSeriesActiveCases(temp)
 
-      console.log('days:', dateArray)
+      // console.log('days:', dateArray)
       setLoading(false)
     }
 
@@ -192,7 +193,7 @@ function App() {
             justify='center'
             alignItems='center'
             style={{ margin: '40px 0px 40px 0px' }}>
-            <img src={loadingGif} style={{ width: 200, height: 200 }} />
+            <img alt='loading' src={loadingGif} style={{ width: 200, height: 200 }} />
           </Grid>
         ) : (
           <div className="App">
@@ -207,7 +208,7 @@ function App() {
             <Typography color="textPrimary" variant="h4" align='center' gutterBottom>
               7-Day Averages over the Last Month
         </Typography>
-            <Container minHeight="100%">
+            <Container>
               <Line
                 data={data}
                 options={options} />
@@ -216,7 +217,6 @@ function App() {
         )
         // end main
       }
-      <BottomNavigation />
     </div>
   )
 }

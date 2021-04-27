@@ -22,7 +22,6 @@ export default function RegionPicker(props) {
   const classes = useStyles();
 
   const handleChange = (event) => {
-    console.log("Region change", event.target.value)
     props.handleSetRegion(event.target.value);
   };
 
