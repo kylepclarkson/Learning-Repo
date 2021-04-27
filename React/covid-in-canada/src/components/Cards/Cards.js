@@ -15,12 +15,12 @@ function Cards({ summaryData, population }) {
   )
   return (
     <div>
-      <Typography align='center' color='textSecondary' variant='h5'>
+      <Typography align='center' color='textSecondary' variant='body1'>
         Last updated: {date.toLocaleDateString()}
       </Typography>
       <div className={styles.container}>
-        <Typography color="textPrimary" variant="h3" align='center' gutterBottom>
-          Summary Data
+        <Typography color="textPrimary" variant="h4" align='center' gutterBottom>
+          COVID-19 So Far
         </Typography>
         <Grid container justify='center'>
           {/* Total Cases */}
@@ -83,7 +83,7 @@ function Cards({ summaryData, population }) {
         </Grid>
       </div>
       <div className={styles.container}>
-        <Typography color="textPrimary" variant="h3" align='center' gutterBottom>
+        <Typography color="textPrimary" variant="h4" align='center' gutterBottom>
           Within the last 24 hours
         </Typography>
         <Grid container justify='center'>
@@ -174,7 +174,7 @@ function Cards({ summaryData, population }) {
 
 
       <div className={styles.container}>
-        <Typography color="textPrimary" variant="h3" align='center' gutterBottom>
+        <Typography color="textPrimary" variant="h4" align='center' gutterBottom>
           Vaccine Distribution
         </Typography>
         <Grid container justify='center'>
