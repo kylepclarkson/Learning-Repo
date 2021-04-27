@@ -4,8 +4,11 @@ import { Line } from 'react-chartjs-2'
 
 import CountryPicker from './components/RegionPicker/RegionPicker'
 import Cards from './components/Cards/Cards'
+import Footer from './components/Footer/Footer'
 import covidImage from './covid-19.svg'
 import loadingGif from './loading.gif'
+
+import styles from './App.css'
 
 // the number of previous day (minus 7) to use when comptuing 7 day case averages. 
 const day_window = 35
@@ -176,47 +179,50 @@ function App() {
 
   return (
     <div>
-      <Grid container direction='row' justify='center' alignItems='flex-end'>
-        <Grid item style={{ marginRight: '20px', marginTop: '100px', marginBottom: '20px' }}>
-          <img alt='covid' src={covidImage} style={{ width: 150, height: 150 }} />
-        </Grid>
-        <Grid item>
-          <Typography color="textPrimary" variant='h2' align='center' gutterBottom>
-            Covid In Canada
-        </Typography>
-        </Grid>
-      </Grid>
-      {
-        loading ? (
-          <Grid container item
-            direction='row'
-            justify='center'
-            alignItems='center'
-            style={{ margin: '40px 0px 40px 0px' }}>
-            <img alt='loading' src={loadingGif} style={{ width: 200, height: 200 }} />
+      <div className={styles.pageContainer}>
+        <Grid container direction='row' justify='center' alignItems='flex-end'>
+          <Grid item style={{ marginRight: '20px', marginTop: '100px', marginBottom: '20px' }}>
+            <img alt='covid' src={covidImage} style={{ width: 150, height: 150 }} />
           </Grid>
-        ) : (
-          <div className="App">
-            <CountryPicker
-              currentRegion={region}
-              handleSetRegion={handleSetRegion}
-            />
-            <Cards
-              summaryData={summaryData}
-              population={populations[region]}
-            />
-            <Typography color="textPrimary" variant="h4" align='center' gutterBottom>
-              7-Day Averages over the Last Month
+          <Grid item>
+            <Typography color="textPrimary" variant='h2' align='center' gutterBottom>
+              Covid In Canada
         </Typography>
-            <Container>
-              <Line
-                data={data}
-                options={options} />
-            </Container>
-          </div>
-        )
-        // end main
-      }
+          </Grid>
+        </Grid>
+        {
+          loading ? (
+            <Grid container item
+              direction='row'
+              justify='center'
+              alignItems='center'
+              style={{ minHeight: '100vh' }}>
+              <img alt='loading' src={loadingGif} style={{ width: 200, height: 200 }} />
+            </Grid>
+          ) : (
+            <div>
+              <CountryPicker
+                currentRegion={region}
+                handleSetRegion={handleSetRegion}
+              />
+              <Cards
+                summaryData={summaryData}
+                population={populations[region]}
+              />
+              <Typography color="textPrimary" variant="h4" align='center' gutterBottom>
+                7-Day Averages over the Last Month**
+        </Typography>
+              <Container>
+                <Line
+                  data={data}
+                  options={options} />
+              </Container>
+            </div>
+          )
+          // end main
+        }
+      </div>
+      <Footer />
     </div>
   )
 }
