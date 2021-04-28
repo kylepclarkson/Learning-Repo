@@ -8,9 +8,9 @@ import styles from './Cards.module.css'
 function Cards({ summaryData, population }) {
   const parts = String(summaryData.date).split('-')
   const date = new Date(
-    parseInt(parts[2],10),
-    parseInt(parts[1],10)-1,
-    parseInt(parts[0],10)
+    parseInt(parts[2], 10),
+    parseInt(parts[1], 10) - 1,
+    parseInt(parts[0], 10)
   )
   return (
     <div>
@@ -110,7 +110,7 @@ function Cards({ summaryData, population }) {
                   duration={1}
                   decimals={3}
                   separator=','
-                />%             
+                />%
               </Typography>
               <Typography variant='body2'>
                 Number currently active cases of COVID-19 and per capita percentage.
@@ -123,7 +123,7 @@ function Cards({ summaryData, population }) {
               <Typography color="textSecondary" variant="h5" gutterBottom>
                 New Cases
             </Typography>
-              <Typography variant='h5' gutterBottom> 
+              <Typography variant='h5' gutterBottom>
                 <CountUp
                   start={0}
                   end={summaryData.cases}
@@ -134,7 +134,7 @@ function Cards({ summaryData, population }) {
               <Typography color="textSecondary" variant="body1" gutterBottom>
                 Change
               </Typography>
-              <Typography variant='body1' 
+              <Typography variant='body1'
                 className={summaryData.active_cases_change < 0 ? styles.red : styles.green}
                 gutterBottom>
                 <CountUp
@@ -246,12 +246,24 @@ function Cards({ summaryData, population }) {
                 Fully Administered
             </Typography>
               <Typography variant='h5' gutterBottom>
-                <CountUp 
+                <CountUp
                   start={0}
                   end={summaryData.cumulative_cvaccine}
                   duration={2}
                   separator=','
                 />
+              </Typography>
+              <Typography color="textSecondary" variant="body1" gutterBottom>
+                Per Capita*
+              </Typography>
+              <Typography variant='body1' gutterBottom>
+                <CountUp
+                  start={0}
+                  end={(summaryData.cumulative_cvaccine / population * 100)}
+                  duration={2}
+                  decimals={3}
+                  separator=','
+                />%
               </Typography>
               <Typography variant='body2'>
                 The number of individuals fully vaccinated and per captia percentage.
