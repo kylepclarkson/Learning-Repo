@@ -18,6 +18,9 @@ const Footer = () => {
           <Typography color='white' variant='body2'>
             **An average is used due to some regions combining weekend numbers with Monday's numbers.
           </Typography>
+          <Typography color='white' variant='body2'>
+            ***An estimation using partially administered / delivered. 
+          </Typography>
           <Typography color='white' variant='body1' className={'row'}>
             Thanks to the team at <a href={'https://opencovid.ca/api/'} target='_blank' className={'text-white'}>open covid</a> which supplied the data!
           </Typography>

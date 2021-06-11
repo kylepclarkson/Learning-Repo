@@ -192,7 +192,7 @@ function Cards({ summaryData, population }) {
                 />
               </Typography>
               <Typography color="textSecondary" variant="body1" gutterBottom>
-                Percent administered
+                Percent administered***
               </Typography>
               <Typography variant='body1' gutterBottom>
                 <CountUp
@@ -204,7 +204,7 @@ function Cards({ summaryData, population }) {
                 />%
               </Typography>
               <Typography variant='body2'>
-                The number of vaccines delivered and percentage administered.
+                The number of vaccines delivered and lower bound on percent administered.
             </Typography>
             </CardContent>
           </Grid>

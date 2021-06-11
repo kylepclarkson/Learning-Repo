@@ -45,18 +45,16 @@ function App() {
       {
         label: 'Daily Cases',
         data: timeSeriesNewCases,
-        pointRadius: 4,
-        fill: true,
-        backgroundColor: 'rgba(255, 99, 110, 0.5)',
+        fill: false,
+        backgroundColor: 'rgb(255, 99, 132)',
         borderColor: 'rgba(255, 99, 110, 0.9)',
       },
       {
         label: 'Active Case Count',
         data: timeSeriesActiveCases,
-        pointRadius: 4,
-        fill: true,
-        backgroundColor: 'rgba(10, 110, 255, 0.5)',
-        borderColor: 'rgba(10, 110, 255, 0.9)',
+        fill: false,
+        backgroundColor: 'rgb(10, 110, 255)',
+        borderColor: 'rgba(10, 132, 255, 0.9)',
       },
     ],
   };
@@ -213,10 +211,7 @@ function App() {
               />
               <Typography color="textPrimary" variant="h4" align='center' gutterBottom>
                 7-Day Averages over the Last Month**
-              </Typography>
-              <Typography color="textSecondary" variant="body2" align='center' gutterBottom>
-                (Click dataset in legend to view single trend)
-              </Typography>
+        </Typography>
               <Container>
                 <Line
                   data={data}
