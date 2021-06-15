@@ -1,8 +1,10 @@
-import React from "react";
-
+import React, { useContext } from "react";
+import { GlobalContext } from "../context/GlobalState";
 import Product from "./Product";
 
 const ProductList = () => {
+
+  const { products } = useContext(GlobalContext)
 
   return (
     <div className="col-md-8 col-sm-12">

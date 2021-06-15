@@ -4,6 +4,8 @@ import { GlobalContext } from '../context/GlobalState';
 export const AddTransaction = () => {
 
   const { addTransaction } = useContext(GlobalContext);
+  console.log('Add transaction', addTransaction);
+  console.log('Global context', useContext(GlobalContext));
 
   const [text, setText] = React.useState("");
   const [amount, setAmount] = React.useState(0);
