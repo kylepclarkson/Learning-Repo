@@ -1,3 +1,4 @@
+
 // === ACTIONS ===
 export const ADD_PRODUCT = "ADD_PRODUCT";
 export const REMOVE_PRODUCT = "REMOVE_PRODUCT";
@@ -6,15 +7,30 @@ export const DELETE_PRODUCT = "DELETE_PRODUCT";
 
 // === Reducer functions ===
 const addProductToCart = (state, product) => {
-  console.log("Add to cart called.", state.cart);
-  console.log("Add to cart called.", state);
-  // const index = state.cart.findIndex
-  return state
+  
+  const updatedState = state.map(x => x);
+  const index = updatedState.findIndex((item) => item.id === product.id)
+  if (index < 0) {
+    updatedState.push({...product, quantity: 1})
+  } else {
+    const updatedItem = {...updatedState[index]};
+    updatedItem.quantity++;
+    updatedState[index]=updatedItem;
+  }
+  return updatedState
 }
 
 const removeFromCart = (state, productId) => {
-  console.log("Remove from cart called");
-  return {...state}
+  const updatedState = [...state];
+  const index = updatedState.findIndex((item) => item.id === productId);
+  const updatedItem = {...updatedState[index]};
+  updatedItem.quantity--;
+  if (updatedItem.quantity <= 0) {
+    updatedState.splice(index, 1);
+  } else {
+    updatedState[index] = updatedItem;
+  }
+  return updatedState;
 }
 
 const createProduct = (state, product) => {
@@ -29,13 +45,13 @@ const deleteProduct = (state, productId) => {
 
 // === REDUCERS ===
 export const cartReducer = (state, action) => {
-  console.log("state", state)
+
   switch(action.type) {
     case ADD_PRODUCT:
       return addProductToCart(state, action.product);
 
     case REMOVE_PRODUCT:
-      return removeFromCart(state, action.productID);
+      return removeFromCart(state, action.productId);
 
     default:
       return state;

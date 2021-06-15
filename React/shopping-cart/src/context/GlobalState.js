@@ -40,9 +40,10 @@ export const GlobalProvider = (props) => {
   };
 
   const removeFromCart = (productId) => {
+    console.log("dispatch remove from cart", productId)
     cartDispatch({
       type: REMOVE_PRODUCT,
-      productId: productId,
+      productId,
     });
   };
 

@@ -4,7 +4,7 @@ import { GlobalContext } from '../context/GlobalState'
 const Product = ({product}) => {
 
   const { addToCart } = useContext(GlobalContext);
-  console.log("Global provider", useContext(GlobalContext));
+  // console.log("Global provider", useContext(GlobalContext));
   return (
     <div className="card h-100">
       <div className="card-body">
